@@ -1,7 +1,7 @@
 import serial
 import time
 import random
-import twiggy as tw
+#import twiggy as tw
 import sqlite3
 import datetime as dt
 import requests
@@ -18,12 +18,15 @@ def post_nimbits_http(stream, value):
     try:
         r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
     except:
-        tw.log.trace('error').error('bad post to nimbits')
+        pass
+        #tw.log.trace('error').error('bad post to nimbits')
     log_message = 'nimbits response value = ' + str(r.status_code)
     if r.status_code == 200:
-        tw.log.info(log_message)
+        pass
+        #tw.log.info(log_message)
     else:
-        tw.log.error(log_message)
+        pass
+        #tw.log.error(log_message)
     return r.status_code
 
 def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
@@ -79,55 +82,63 @@ def initiate_modem_nimbits(s):
     while 1:
         connection_attempt += 1
 
-        tw.log.info('connection attempt ' + str(connection_attempt))
+        #tw.log.info('connection attempt ' + str(connection_attempt))
 
-        tw.log.info('flushing out serial port')
+        #tw.log.info('flushing out serial port')
         pause_and_read_serial(s)
 
         s.write('AT\r\n')
         response = pause_and_read_serial(s)
         if is_string_in_response('OK', response):
-            tw.log.info('good AT response')
+            pass
+            #tw.log.info('good AT response')
         else:
-            tw.log.warning('bad AT response')
+            pass
+            #tw.log.warning('bad AT response')
             continue
 
         s.write('AT#GPRS=1\r\n')
         response = pause_and_read_serial(s)
         if is_string_in_response('OK', response):
-            tw.log.info('good GPRS response')
+            pass
+            #tw.log.info('good GPRS response')
         else:
-            tw.log.warning('bad GPRS response')
+            pass
+            #tw.log.warning('bad GPRS response')
 
         s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
         response = pause_and_read_serial(s)
         if is_string_in_response('OK', response):
-            tw.log.info('good CGDCONT response')
+            pass
+            #tw.log.info('good CGDCONT response')
         else:
-            tw.log.warning('bad CGDCONT response')
+            pass
+            #tw.log.warning('bad CGDCONT response')
             continue
 
         s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
         response = pause_and_read_serial(s)
         if is_string_in_response('CONNECT', response):
-            tw.log.info('good SD response ' + str(connection_attempt))
+            #tw.log.info('good SD response ' + str(connection_attempt))
             break
         else:
-            tw.log.warning('bad SD response ' + str(connection_attempt))
-            tw.log.info('raw SD response')
+            #tw.log.warning('bad SD response ' + str(connection_attempt))
+            #tw.log.info('raw SD response')
             for r in response:
-                tw.log.info(r.strip())
+                pass
+                #tw.log.info(r.strip())
             continue
 
 def read_ain2():
     num_avg = 20
     data_value = 0
     for i in range(num_avg):
-        f = open('/sys/devices/platform/tsc/ain2')
+        print i
+        f = open('/sys/devices/platform/omap/tsc/ain2')
         data_value_string = ''
         while 1:
             char = f.read(1)
-            if char == '\x00':
+            if char == '\x00' or char == '':
                 break
             else:
                 data_value_string += char
@@ -136,7 +147,7 @@ def read_ain2():
         f.close()
         time.sleep(1.0)
     data_value = data_value / num_avg
-    tw.log.info('avg = ' + str(data_value))
+    #tw.log.info('avg = ' + str(data_value))
     return data_value
 
 def parse_response(s):
@@ -148,12 +159,14 @@ def parse_response(s):
     else:
         first_response = 'No Response'
 
-    tw.log.info(first_response)
+    #tw.log.info(first_response)
 
     if '200 OK' in first_response:
-        tw.log.info('nimbits POST successful')
+        pass
+        #tw.log.info('nimbits POST successful')
     else:
-        tw.log.error('nimbits POST unsuccessful')
+        pass
+        #tw.log.error('nimbits POST unsuccessful')
 
     return first_response
 
@@ -163,12 +176,15 @@ def post_pachube_http(value):
     try:
         r = requests.put('http://api.pachube.com/v2/feeds/43073',headers=headers,data=json.dumps(data))
     except:
-        tw.log.trace('error').error('bad put to pachube')
+        pass
+        #tw.log.trace('error').error('bad put to pachube')
     log_message = 'pachube response value = ' + str(r.status_code)
     if r.status_code == 200:
-        tw.log.info(log_message)
+        pass
+        #tw.log.info(log_message)
     else:
-        tw.log.error(log_message)
+        pass
+        #tw.log.error(log_message)
 
 def pause_and_read_serial(s):
     time.sleep(1)
