@@ -18,7 +18,7 @@ def post_nimbits_staggered(data_value):
     content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
     content += '&email=drdrsoto@gmail.com'
     content += '&value=%s' % data_value
-    content += '&point=' % stream_name
+    content += '&point=%s' % stream_name
     content_length = len(content)
 
     post_string = ''
@@ -107,7 +107,7 @@ tw.log.info('---------------------')
 while (1):
     tw.log.info('-- top of loop --')
 
-    def initiate_modem()
+    initiate_modem()
 
     data_value = read_ain2()
 
