@@ -16,5 +16,8 @@ while 1:
     tw.log.info('logging value = ' + str(data_value))
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":data_value}]}
     resp=requests.put('http://api.pachube.com/v2/feeds/39985',headers=headers,data=json.dumps(data))
-    tw.log.info('response value = ' + str(resp.status_code))
+    if resp.status_code == 200:
+        tw.log.info('response value = ' + str(resp.status_code))
+    else:
+        tw.log.error('response value = ' + str(resp.status_code))
     time.sleep(60)
