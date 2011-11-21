@@ -15,7 +15,10 @@ while 1:
     data_value = 100 + random.random() * 50
     tw.log.info('logging value = ' + str(data_value))
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":data_value}]}
-    resp=requests.put('http://api.pachube.com/v2/feeds/39985',headers=headers,data=json.dumps(data))
+    try:
+        resp=requests.put('http://api.pachube.com/v2/feeds/39985',headers=headers,data=json.dumps(data))
+    except:
+        tw.log.trace('error').warning('bad request')
     if resp.status_code == 200:
         tw.log.info('response value = ' + str(resp.status_code))
     else:
