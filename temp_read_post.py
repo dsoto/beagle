@@ -39,4 +39,4 @@ while 1:
         tw.log.info('pachube response value = ' + str(resp.status_code))
     else:
         tw.log.error('pachube response value = ' + str(resp.status_code))
-    time.sleep(5)
+    time.sleep(60)
