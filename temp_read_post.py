@@ -15,10 +15,20 @@ headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
 
 # sleep for a minute, send random number to pachube in json format
 while 1:
+    tw.log.info("top of loop")
+    data_value = 0
     # read temperature from arduino
-    s.write(chr(0x00))
+    serial_response = s.write(chr(0x00))
+    tw.log.info("arduino write response = " + str(serial_response))
     time.sleep(0.5)
-    data_value=ord(s.read()) / 1024.0 * 5 * 100
+    try:
+        serial_response=ord(s.read())
+    except:
+        tw.log.trace('error').warning('bad serial read from arduino')
+
+    tw.log.info("arduino temp response = " + str(serial_response))
+    if serial_response:
+        data_value = serial_response / 1024.0 * 5 * 100
 
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":data_value}]}
     try:
@@ -26,7 +36,7 @@ while 1:
     except:
         tw.log.trace('error').warning('bad request')
     if resp.status_code == 200:
-        tw.log.info('response value = ' + str(resp.status_code))
+        tw.log.info('pachube response value = ' + str(resp.status_code))
     else:
-        tw.log.error('response value = ' + str(resp.status_code))
-    time.sleep(60)
+        tw.log.error('pachube response value = ' + str(resp.status_code))
+    time.sleep(5)
