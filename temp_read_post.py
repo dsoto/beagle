@@ -14,12 +14,12 @@ tw.log.info('starting pachube_post.py')
 headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
 
 def post_nimbits(value):
-    nimits_data = {"email":"drdrsoto@gmail.com",
+    nimbits_data = {"email":"drdrsoto@gmail.com",
                "secret":"01787ade-c6d6-4f9b-8b86-20850af010d9",
                "point":"603_Test_Stream",
                "value":value}
 
-    r = requests.post("http://app.nimbits.com/service/currentvalue", data=payload)
+    r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
 
 def post_pachube(value):
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":value}]}
