@@ -16,7 +16,7 @@ headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
 def post_nimbits(value):
     nimbits_data = {"email":"drdrsoto@gmail.com",
                "secret":"01787ade-c6d6-4f9b-8b86-20850af010d9",
-               "point":"603_Test_Stream",
+               "point":"603_Kitchen",
                "value":value}
 
     r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
