@@ -40,6 +40,7 @@ while 1:
     serial_response = s.write(chr(0x00))
     tw.log.info("arduino write response = " + str(serial_response))
     time.sleep(0.5)
+    serial_response = None
     try:
         serial_response=ord(s.read())
     except:
@@ -50,7 +51,7 @@ while 1:
     if serial_response:
         data_value = serial_response / 1024.0 * 5 * 100
 
-    post_nimbits(data_value)
-    post_pachube(data_value)
+        post_nimbits(data_value)
+        post_pachube(data_value)
 
     time.sleep(60)
