@@ -15,28 +15,34 @@ headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
 
 def post_nimbits(value):
     nimbits_data = {"email":"drdrsoto@gmail.com",
-               "secret":"01787ade-c6d6-4f9b-8b86-20850af010d9",
-               "point":"603_Kitchen",
-               "value":value}
+                    "secret":"01787ade-c6d6-4f9b-8b86-20850af010d9",
+                    "point":"603_Kitchen",
+                    "value":value}
 
-    r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
+    try:
+        r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
+    except:
+        tw.log.trace('error').warning('bad post to nimbits')
+    log_message = 'nimbits response value = ' + str(r.status_code)
+    if r.status_code == 200:
+        tw.log.info(log_message)
+    else:
+        tw.log.error(log_message)
+
 
 def post_pachube(value):
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":value}]}
     try:
-        resp=requests.put('http://api.pachube.com/v2/feeds/39985',headers=headers,data=json.dumps(data))
+        r = requests.put('http://api.pachube.com/v2/feeds/39985',headers=headers,data=json.dumps(data))
     except:
-        tw.log.trace('error').warning('bad request')
-    if resp.status_code == 200:
-        tw.log.info('pachube response value = ' + str(resp.status_code))
+        tw.log.trace('error').warning('bad put to pachube')
+    log_message = 'pachube response value = ' + str(r.status_code)
+    if r.status_code == 200:
+        tw.log.info(log_message)
     else:
-        tw.log.error('pachube response value = ' + str(resp.status_code))
+        tw.log.error(log_message)
 
-# sleep for a minute, send random number to pachube in json format
-while 1:
-    tw.log.info("top of loop")
-    data_value = 0
-    # read temperature from arduino
+def read_serial_arduino():
     serial_response = s.write(chr(0x00))
     tw.log.info("arduino write response = " + str(serial_response))
     time.sleep(0.5)
@@ -47,6 +53,13 @@ while 1:
         tw.log.trace('error').warning('bad serial read from arduino')
 
     tw.log.info("arduino temp response = " + str(serial_response))
+    return serial_response
+
+# sleep for a minute, send random number to pachube in json format
+while 1:
+    tw.log.info("top of loop")
+
+    serial_response = read_serial_arduino()
 
     if serial_response:
         data_value = serial_response / 1024.0 * 5 * 100
