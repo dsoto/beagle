@@ -22,7 +22,7 @@ def post_nimbits(value):
     try:
         r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
     except:
-        tw.log.trace('error').warning('bad post to nimbits')
+        tw.log.trace('error').error('bad post to nimbits')
     log_message = 'nimbits response value = ' + str(r.status_code)
     if r.status_code == 200:
         tw.log.info(log_message)
@@ -35,7 +35,7 @@ def post_pachube(value):
     try:
         r = requests.put('http://api.pachube.com/v2/feeds/39985',headers=headers,data=json.dumps(data))
     except:
-        tw.log.trace('error').warning('bad put to pachube')
+        tw.log.trace('error').error('bad put to pachube')
     log_message = 'pachube response value = ' + str(r.status_code)
     if r.status_code == 200:
         tw.log.info(log_message)
