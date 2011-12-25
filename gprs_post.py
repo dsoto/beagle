@@ -73,7 +73,7 @@ def is_string_in_response(string, response):
     return present
 
 while (1):
-    tw.log.info('top of loop')
+    tw.log.info('-- top of loop --')
 
     tw.log.info('flushing out serial port')
     pause_and_read_serial()
