@@ -67,6 +67,11 @@ tw.log.info('---------------------')
 tw.log.info('starting gprs_post.py')
 tw.log.info('---------------------')
 
+def is_string_in_response(string, response):
+    present = False
+    for r in response:
+        if string in r:
+            present = True
 
 while (1):
     tw.log.info('top of loop')
@@ -77,12 +82,18 @@ while (1):
     print 'testing using AT command'
     s.write('AT\r\n')
     response = pause_and_read_serial()
+    if is_string_in_response('OK', response):
+        tw.log.info('good AT response')
+    else:
+        tw.log.info('bad AT response')
 
     print 'activating GPRS'
     s.write('AT#GPRS=1\r\n')
     response = pause_and_read_serial()
-    for r in response:
-        tw.log.info('GPRS - ' + r)
+    if is_string_in_response('OK', response):
+        tw.log.info('good GPRS response')
+    else:
+        tw.log.info('bad GPRS response')
 
     print 'activating context'
     s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
@@ -94,8 +105,10 @@ while (1):
     s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
     #s.write('AT#SD=2,0,80,"www.columbia.edu"\r\n')
     response = pause_and_read_serial()
-    for r in response:
-        tw.log.info('SD - ' + r)
+    if is_string_in_response('CONNECT', response):
+        tw.log.info('good SD response')
+    else:
+        tw.log.info('bad SD response')
 
     print 'posting to nimbits'
     #get_columbia_website()
@@ -109,10 +122,10 @@ while (1):
     response = ''.join(response)
     print '---'
     if '200 OK' in response:
-        tw.log.info('successful')
+        tw.log.info('nimbits POST successful')
         print 'successful'
     else:
-        tw.log.error('unsuccessful')
+        tw.log.error('nimbits POST unsuccessful')
         print 'unsuccessful'
     print '---'
 
