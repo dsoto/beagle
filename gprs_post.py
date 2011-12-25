@@ -18,11 +18,11 @@ def post_nimbits_staggered():
     print data_value
 
     content = ''
-    content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'    
-    content += '&email=drdrsoto%40gmail.com'    
+    content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
+    content += '&email=drdrsoto%40gmail.com'
     content += '&value=%s&point=603_Test_Stream' % data_value
     content_length = len(content)
-    
+
     post_string = ''
     post_string += 'POST /service/currentvalue HTTP/1.1\r\n'
     post_string += 'Host: app.nimbits.com\r\n'
@@ -61,57 +61,68 @@ s = serial.Serial('/dev/ttyUSB0',
                   baudrate=115200,
                   timeout=1)
 
+
 tw.quickSetup(file='gprs.log')
 tw.log.info('---------------------')
 tw.log.info('starting gprs_post.py')
 tw.log.info('---------------------')
 
-print 'flushing out serial port'
-pause_and_read_serial()
 
-print 'activating GPRS'
-s.write('AT#GPRS=1\r\n')
-response = pause_and_read_serial()
-for r in response:
-	tw.log.info('GPRS - ' + r)
+while (1):
+    tw.log.info('top of loop')
 
-print 'activating context'
-s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
-response = pause_and_read_serial()
-for r in response:
-    tw.log.info('CGDCONT - ' + r)
+    tw.log.info('flushing out serial port')
+    pause_and_read_serial()
 
-print 'socket dial'
-s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
-#s.write('AT#SD=2,0,80,"www.columbia.edu"\r\n')
-response = pause_and_read_serial()
-for r in response:
-    tw.log.info('SD - ' + r)
+    print 'testing using AT command'
+    s.write('AT\r\n')
+    response = pause_and_read_serial()
 
-print 'posting to nimbits'
-#get_columbia_website()
-#post_nimbits()
-post_nimbits_staggered()
-print 'sleeping'
-time.sleep(15) # need extra time for html response
-print 'post response'
+    print 'activating GPRS'
+    s.write('AT#GPRS=1\r\n')
+    response = pause_and_read_serial()
+    for r in response:
+        tw.log.info('GPRS - ' + r)
 
-response = pause_and_read_serial()
-response = ''.join(response)
-print '---'
-if '200 OK' in response:
-    tw.log.info('successful')
-    print 'successful'
-else:
-    tw.log.error('unsuccessful')
-    print 'unsuccessful'
-print '---'
+    print 'activating context'
+    s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
+    response = pause_and_read_serial()
+    for r in response:
+        tw.log.info('CGDCONT - ' + r)
 
-print 'deactivating GPRS'
-s.write('AT#GPRS=0\r\n')
-response = pause_and_read_serial()
-for r in response:
-    tw.log.error('GPRS OFF - ' + r)
+    print 'socket dial'
+    s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
+    #s.write('AT#SD=2,0,80,"www.columbia.edu"\r\n')
+    response = pause_and_read_serial()
+    for r in response:
+        tw.log.info('SD - ' + r)
+
+    print 'posting to nimbits'
+    #get_columbia_website()
+    #post_nimbits()
+    post_nimbits_staggered()
+    print 'sleeping'
+    time.sleep(15) # need extra time for html response
+    print 'post response'
+
+    response = pause_and_read_serial()
+    response = ''.join(response)
+    print '---'
+    if '200 OK' in response:
+        tw.log.info('successful')
+        print 'successful'
+    else:
+        tw.log.error('unsuccessful')
+        print 'unsuccessful'
+    print '---'
+
+    print 'deactivating GPRS'
+    s.write('AT#GPRS=0\r\n')
+    response = pause_and_read_serial()
+    for r in response:
+        tw.log.error('GPRS OFF - ' + r)
+
+    time.sleep(60)
 
 print 'closing serial port'
 s.close()
