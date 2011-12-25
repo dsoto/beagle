@@ -86,7 +86,7 @@ while (1):
     if is_string_in_response('OK', response):
         tw.log.info('good AT response')
     else:
-        tw.log.info('bad AT response')
+        tw.log.error('bad AT response')
 
     print 'activating GPRS'
     s.write('AT#GPRS=1\r\n')
@@ -94,13 +94,16 @@ while (1):
     if is_string_in_response('OK', response):
         tw.log.info('good GPRS response')
     else:
-        tw.log.info('bad GPRS response')
+        tw.log.error('bad GPRS response')
 
     print 'activating context'
     s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
     response = pause_and_read_serial()
-    for r in response:
-        tw.log.info('CGDCONT - ' + r)
+    if is_string_in_response('OK', response):
+        tw.log.info('good CGDCONT response')
+    else:
+        tw.log.error('bad CGDCONT response')
+
 
     print 'socket dial'
     s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
@@ -109,7 +112,7 @@ while (1):
     if is_string_in_response('CONNECT', response):
         tw.log.info('good SD response')
     else:
-        tw.log.info('bad SD response')
+        tw.log.error('bad SD response')
 
     print 'posting to nimbits'
     #get_columbia_website()
@@ -133,8 +136,10 @@ while (1):
     print 'deactivating GPRS'
     s.write('AT#GPRS=0\r\n')
     response = pause_and_read_serial()
-    for r in response:
-        tw.log.error('GPRS OFF - ' + r)
+    if is_string_in_response('OK', response):
+        tw.log.info('good GPRS off response')
+    else:
+        tw.log.error('bad GPRS off response')
 
     time.sleep(60)
 
