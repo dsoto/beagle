@@ -15,7 +15,7 @@ def pause_and_read_serial():
 def post_nimbits_staggered():
 
     data_value = 20 + 10*random.random()
-    print data_value
+    tw.log.info('data_value = ' + str(data_value))
 
     content = ''
     content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
