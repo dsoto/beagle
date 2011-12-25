@@ -9,7 +9,6 @@ import twiggy as tw
 def pause_and_read_serial():
     time.sleep(1)
     response = s.readlines()
-    print response
     return response
 
 def post_nimbits_staggered():
@@ -127,10 +126,10 @@ while (1):
     print '---'
     if '200 OK' in response:
         tw.log.info('nimbits POST successful')
-        print 'successful'
+        print 'nimbits POST successful'
     else:
         tw.log.error('nimbits POST unsuccessful')
-        print 'unsuccessful'
+        print 'nimbits POST unsuccessful'
     print '---'
 
     print 'deactivating GPRS'
