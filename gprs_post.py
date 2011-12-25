@@ -72,6 +72,7 @@ def is_string_in_response(string, response):
     for r in response:
         if string in r:
             present = True
+    return present
 
 while (1):
     tw.log.info('top of loop')
