@@ -31,7 +31,6 @@ def post_nimbits_staggered():
     post_string += 'Accept: */*\r\n'
     post_string += 'User-Agent: pysoto\r\n\r\n'
     post_string += content
-    print post_string
 
     # hack to work around possible 128 character limit
     for c in post_string:
@@ -102,7 +101,6 @@ while (1):
         tw.log.info('good CGDCONT response')
     else:
         tw.log.error('bad CGDCONT response')
-
 
     print 'socket dial'
     s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
