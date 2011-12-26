@@ -17,8 +17,8 @@ def post_nimbits_staggered():
     tw.log.info('data_value = ' + str(data_value))
 
     content = ''
-    content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
-    content += '&email=drdrsoto%40gmail.com'
+    content += 'secret=my-secret-code'
+    content += '&email=my-email'
     content += '&value=%s&point=603_Test_Stream' % data_value
     content_length = len(content)
 
@@ -36,23 +36,6 @@ def post_nimbits_staggered():
     for c in post_string:
         s.write(c)
         time.sleep(0.01)
-
-def post_nimbits():
-    s.write('GET /service/currentvalue HTTP/1.1\r\n')
-    s.write('Host: app.nimbits.com\r\n')
-    s.write('Content-Length: 101\r\n')
-    s.write('Content-Type: application/x-www-form-urlencoded\r\n')
-    s.write('Accept-Encoding: identity, deflate, compress, gzip\r\n')
-    s.write('Accept: */*\r\n')
-    s.write('User-Agent: python-requests/0.8.1\r\n\r\n')
-    s.write('secret=01787ade-c6d6-4f9b-8b86-20850af010d9')
-    s.write('&email=drdrsoto%40gmail.com')
-    s.write('&value=20&point=603_Test_Stream')
-
-def get_columbia_website():
-    s.write('GET /~ds2998/ HTTP/1.1\r\n')
-    s.write('HOST: www.columbia.edu 80\r\n')
-    s.write('\r\n')
 
 print 'opening serial port'
 s = serial.Serial('/dev/ttyUSB0',
@@ -104,7 +87,6 @@ while (1):
 
     print 'socket dial'
     s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
-    #s.write('AT#SD=2,0,80,"www.columbia.edu"\r\n')
     response = pause_and_read_serial()
     if is_string_in_response('CONNECT', response):
         tw.log.info('good SD response')
@@ -112,8 +94,6 @@ while (1):
         tw.log.error('bad SD response')
 
     print 'posting to nimbits'
-    #get_columbia_website()
-    #post_nimbits()
     post_nimbits_staggered()
     print 'sleeping'
     time.sleep(15) # need extra time for html response
@@ -139,7 +119,6 @@ while (1):
     else:
         tw.log.error('bad GPRS off response')
 
+    # sleep until next minute
     time.sleep(60)
 
-print 'closing serial port'
-s.close()
