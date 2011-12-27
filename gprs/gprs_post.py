@@ -11,10 +11,7 @@ def pause_and_read_serial():
     response = s.readlines()
     return response
 
-def post_nimbits_staggered():
-
-    data_value = 20 + 10*random.random()
-    tw.log.info('data_value = ' + str(data_value))
+def post_nimbits_staggered(data_value):
 
     content = ''
     content += 'secret=my-secret-code'
@@ -55,6 +52,8 @@ def is_string_in_response(string, response):
             present = True
     return present
 
+data_value = 20.0
+
 while (1):
     tw.log.info('-- top of loop --')
 
@@ -94,7 +93,11 @@ while (1):
         tw.log.error('bad SD response')
 
     print 'posting to nimbits'
-    post_nimbits_staggered()
+    tw.log.info('data_value = ' + str(data_value))
+    post_nimbits_staggered(data_value)
+    data_value += 0.1
+    if data_value > 30.0:
+        data_value = 20.0
     print 'sleeping'
     time.sleep(15) # need extra time for html response
     print 'post response'
