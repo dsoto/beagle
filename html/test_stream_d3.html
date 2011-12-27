@@ -33,20 +33,20 @@
 
                  // create axes
                  var vis = d3.select("body")
-                            .data([d3values])
-                            .append("svg:svg")
-                            .attr("width", w+p*2)
-                            .attr("height", h+p*2)
-                            .append("svg:g")
-                                .attr("transform", "translate(" + p + "," + p + ")");
+                             .data([d3values])
+                             .append("svg:svg")
+                             .attr("width", w + p * 2)
+                             .attr("height", h + p * 2)
+                             .append("svg:g")
+                             .attr("transform", "translate(" + p + "," + p + ")");
 
-                 var rules = vis.selectAll("g.rule")
+                 var vrules = vis.selectAll("g.rule")
                      .data(x.ticks(d3.time.hours, 2))
                      .enter().append("svg:g")
                      .attr("class", "rule");
 
                 // vertical axis line
-                rules.append("svg:line")
+                vrules.append("svg:line")
                     // axis has different stroke in css
                     .attr("class", "axis")
                     .attr("x1", x(d3.min(times)))
@@ -55,22 +55,27 @@
                     .attr("y2", y(d3.max(ydata)));
 
                  // vertical grid lines
-                 rules.append("svg:line")
+                 vrules.append("svg:line")
                      .attr("x1", x)
                      .attr("x2", x)
                      .attr("y1", 0)
                      .attr("y2", h - 1);
 
                  // x tick text
-                 rules.append("svg:text")
+                 vrules.append("svg:text")
                      .attr("x", x)
                      .attr("y", h + 20)
                      .attr("dy", ".71em")
                      .attr("text-anchor", "middle")
                      .text(x.tickFormat(d3.time.hours, 2));
 
+                var hrules = vis.selectAll("g.hrule")
+                    .data(y.ticks(10))
+                    .enter().append("svg:g")
+                    .attr("class", "rule");
+
                 // y tick text
-                 rules.append("svg:text")
+                 hrules.append("svg:text")
                      .data(y.ticks(10))
                      .attr("y", y)
                      .attr("x", -10)
@@ -79,7 +84,7 @@
                      .text(y.tickFormat(10));
 
                 // horizontal grid lines
-                 rules.append("svg:line")
+                 hrules.append("svg:line")
                      .data(y.ticks(10))
                      .attr("x1", x(d3.min(times)))
                      .attr("x2", x(d3.max(times)))
@@ -87,7 +92,7 @@
                      .attr("y2", y);
 
                 // horizontal axis line
-                rules.append("svg:line")
+                hrules.append("svg:line")
                     .attr("class", "axis")
                     .attr("x1", x(d3.min(times)))
                     .attr("x2", x(d3.max(times)))
