@@ -1,0 +1,92 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="line.css"/>
+    <script type="text/javascript" src="d3/d3.js"></script>
+    <script src=http://code.jquery.com/jquery.js></script>
+</head>
+<body>
+    <script type="text/javascript">
+        jQuery.getJSON(
+            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=100",
+            {format:"json"},
+            // json object/string gets placed in data
+            // values field of object is an array of strings with individual values
+            // we lump these into an object named d3values
+            function(data) {
+                var d3values = new Array();
+                var times = new Array();
+                var ydata = new Array();
+                for (i in data.values) {
+                    d3values[i] = jQuery.parseJSON(data.values[i]);
+                    times[i] = d3values[i].timestamp;
+                    ydata[i] = d3values[i].d;
+                 }
+
+                 var w = 500,
+                     h = 500,
+                     p = 50,
+                     // i can use d3.time stuff to do native dates
+                     x = d3.scale.linear().domain([d3.min(times),d3.max(times)]).range([0,w]),
+                     y = d3.scale.linear().domain([d3.min(ydata),d3.max(ydata)]).range([h,0]);
+
+                 var vis = d3.select("body")
+                            .data([d3values])
+                            .append("svg:svg")
+                            .attr("width", w+p*2)
+                            .attr("height", h+p*2)
+                            .append("svg:g")
+                                .attr("transform", "translate(" + p + "," + p + ")");
+
+var rules = vis.selectAll("g.rule")
+    .data(x.ticks(10))
+  .enter().append("svg:g")
+    .attr("class", "rule");
+
+rules.append("svg:line")
+    .attr("x1", x)
+    .attr("x2", x)
+    .attr("y1", 0)
+    .attr("y2", h - 1);
+
+rules.append("svg:text")
+    .attr("x", x)
+    .attr("y", h + 20)
+    .attr("dy", ".71em")
+    .attr("text-anchor", "end")
+    .text(x.tickFormat(10));
+
+rules.append("svg:text")
+    .data(y.ticks(10))
+    .attr("y", y)
+    .attr("x", -10)
+    .attr("dy", ".35em")
+    .attr("text-anchor", "end")
+    .text(y.tickFormat(10));
+
+rules.append("svg:line")
+    .data(y.ticks(10))
+    .attr("x1", x(d3.min(times)))
+    .attr("x2", x(d3.max(times)))
+    .attr("y1", y)
+    .attr("y2", y);
+
+                 vis.append("svg:path")
+                    .attr("class","line")
+                    .attr("d", d3.svg.line()
+                     // d is some magic that iterates over the d3values object
+                    .x( function(d) { return x(d.timestamp);} )
+                    .y( function(d) { return y(d.d);} ));
+
+                vis.selectAll("circle.line")
+                    .data(d3values)
+                    .enter().append("svg:circle")
+                    .attr("class","line")
+                    .attr("cx", function(d) { return x(d.timestamp);})
+                    .attr("cy", function(d) { return y(d.d);})
+                    .attr("r", 2);
+            });
+
+    </script>
+</body>
+</html>
+
