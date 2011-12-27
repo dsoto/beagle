@@ -1,0 +1,39 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="line.css"/>
+    <script type="text/javascript" src="d3/d3.js"></script>
+
+    <script src=http://code.jquery.com/jquery.js></script>
+</head>
+<body>
+    <script type="text/javascript">
+        jQuery.getJSON(
+            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=500",
+            {format:"json"},
+            function(data) {
+                var value_strings = data.values
+                var temp = new Array();
+                var time = new Array();
+                var d3values = new Array();
+                // loop through json string/object and print strings to document
+                for (i in value_strings) {
+                    value = jQuery.parseJSON(value_strings[i]);
+                    d3values[i] = value;
+                    var date = new Date(value.timestamp);
+                    temp[i] = value.d;
+                    time[i] = date.toString();
+                    time[i] = value.timestamp;
+                 }
+                 console.log(d3values)
+                 for (i in value_strings) {
+                     document.write(time[i] + " " +
+                                    "  ----   "
+                                    + temp[i] +
+                                    "<br />");
+                }
+                });
+
+    </script>
+</body>
+</html>
+
