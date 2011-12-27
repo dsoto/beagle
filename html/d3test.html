@@ -1,0 +1,56 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="line.css"/>
+    <script type="text/javascript" src="d3/d3.js"></script>
+
+    <script src=http://code.jquery.com/jquery.js></script>
+</head>
+<body>
+    <script type="text/javascript">
+        jQuery.getJSON("http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=25",
+                       {format:"json"},
+                       function(data) {
+                           var value_strings = data.values
+                           var temp = new Array();
+                           var time = new Array();
+                           // this array will get passed to d3
+                           var d3values = new Array();
+                           for (i in value_strings) {
+                               value = jQuery.parseJSON(value_strings[i]);
+                               d3values[i] = value;
+                               var date = new Date(value.timestamp);
+                               temp[i] = value.d;
+                               //time[i] = date.toString();
+                               time[i] = value.timestamp;
+                            }
+                            //console.log(d3values)
+                            //for (i in value_strings) {
+                             //   document.write(time[i] + " " +
+                               //                "  ----   "
+                                 //              + temp[i] +
+                                   //            "<br />");
+                        //   }
+        var w = 500,
+            h = 500,
+            p = 20,
+            x = d3.scale.linear().domain([1324900000000,1325000000000]).range([0,w]),
+            y = d3.scale.linear().domain([20,30]).range([h,0]);
+
+        var vis = d3.select("body")
+                   .data([d3values])
+                   .append("svg:svg")
+                   .attr("width", w+p*2)
+                   .attr("height", h+p*2)
+                   .append("svg:g")
+
+        vis.append("svg:path")
+           .attr("class","line")
+           .attr("d", d3.svg.line()
+           .x( function(d) { console.log(x(d.timestamp)); return x(d.timestamp);} )
+           .y( function(d) { console.log(y(d.d)); return y(d.d);} ))
+                      });
+
+    </script>
+</body>
+</html>
+
