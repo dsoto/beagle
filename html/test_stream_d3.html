@@ -31,6 +31,7 @@
                      x = d3.time.scale().domain([d3.min(times),d3.max(times)]).range([0,w]),
                      y = d3.scale.linear().domain([d3.min(ydata),d3.max(ydata)]).range([h,0]);
 
+                 // create axes
                  var vis = d3.select("body")
                             .data([d3values])
                             .append("svg:svg")
@@ -39,39 +40,44 @@
                             .append("svg:g")
                                 .attr("transform", "translate(" + p + "," + p + ")");
 
-var rules = vis.selectAll("g.rule")
-    .data(x.ticks(d3.time.hours, 2))
-  .enter().append("svg:g")
-    .attr("class", "rule");
+                 var rules = vis.selectAll("g.rule")
+                     .data(x.ticks(d3.time.hours, 2))
+                     .enter().append("svg:g")
+                     .attr("class", "rule");
 
-rules.append("svg:line")
-    .attr("x1", x)
-    .attr("x2", x)
-    .attr("y1", 0)
-    .attr("y2", h - 1);
+                 // vertical grid lines
+                 rules.append("svg:line")
+                     .attr("x1", x)
+                     .attr("x2", x)
+                     .attr("y1", 0)
+                     .attr("y2", h - 1);
 
-rules.append("svg:text")
-    .attr("x", x)
-    .attr("y", h + 20)
-    .attr("dy", ".71em")
-    .attr("text-anchor", "middle")
-    .text(x.tickFormat(d3.time.hours, 2));
+                 // x tick text
+                 rules.append("svg:text")
+                     .attr("x", x)
+                     .attr("y", h + 20)
+                     .attr("dy", ".71em")
+                     .attr("text-anchor", "middle")
+                     .text(x.tickFormat(d3.time.hours, 2));
 
-rules.append("svg:text")
-    .data(y.ticks(10))
-    .attr("y", y)
-    .attr("x", -10)
-    .attr("dy", ".35em")
-    .attr("text-anchor", "end")
-    .text(y.tickFormat(10));
+                // y tick text
+                 rules.append("svg:text")
+                     .data(y.ticks(10))
+                     .attr("y", y)
+                     .attr("x", -10)
+                     .attr("dy", ".35em")
+                     .attr("text-anchor", "end")
+                     .text(y.tickFormat(10));
 
-rules.append("svg:line")
-    .data(y.ticks(10))
-    .attr("x1", x(d3.min(times)))
-    .attr("x2", x(d3.max(times)))
-    .attr("y1", y)
-    .attr("y2", y);
+                // horizontal grid lines
+                 rules.append("svg:line")
+                     .data(y.ticks(10))
+                     .attr("x1", x(d3.min(times)))
+                     .attr("x2", x(d3.max(times)))
+                     .attr("y1", y)
+                     .attr("y2", y);
 
+                 // line path
                  vis.append("svg:path")
                     .attr("class","line")
                     .attr("d", d3.svg.line()
@@ -79,6 +85,7 @@ rules.append("svg:line")
                     .x( function(d) { return x(d.timestamp);} )
                     .y( function(d) { return y(d.d);} ));
 
+                // data points as circles
                 vis.selectAll("circle.line")
                     .data(d3values)
                     .enter().append("svg:circle")
