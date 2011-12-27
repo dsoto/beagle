@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://app.nimbits.com/assets/js/nimbits-3.3.0.js"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(start);
+
+        function start() {
+            // drawChart(null);
+            getPoint(drawChart, 'http://app.nimbits.com', '12a17a96-bc04-4e45-b129-ad33cae517e1', 25)
+        }
+
+        function drawChart(_point) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Year');
+            data.addColumn('number', _point.name);
+            var values = _point.values;
+            for (i = 0; i < values.length; i++) {
+                var value = (eval('(' + values[i] + ')'));
+                var date = new Date(value.timestamp);
+                var ds = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                data.addRow([ds, value.d]);
+            }
+            var options = {
+                width: 800, height: 400,
+                title: 'Up In My Kitchen'
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+<body>
+<div id="chart_div"></div>
+</body>
+</html>
