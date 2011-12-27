@@ -103,6 +103,7 @@ while (1):
     print 'post response'
 
     response = pause_and_read_serial()
+    tw.log.info(response[0].strip())
     response = ''.join(response)
     print '---'
     if '200 OK' in response:
