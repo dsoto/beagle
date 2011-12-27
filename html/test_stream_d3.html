@@ -45,6 +45,15 @@
                      .enter().append("svg:g")
                      .attr("class", "rule");
 
+                // vertical axis line
+                rules.append("svg:line")
+                    // axis has different stroke in css
+                    .attr("class", "axis")
+                    .attr("x1", x(d3.min(times)))
+                    .attr("x2", x(d3.min(times)))
+                    .attr("y1", y(d3.min(ydata)))
+                    .attr("y2", y(d3.max(ydata)));
+
                  // vertical grid lines
                  rules.append("svg:line")
                      .attr("x1", x)
@@ -76,6 +85,14 @@
                      .attr("x2", x(d3.max(times)))
                      .attr("y1", y)
                      .attr("y2", y);
+
+                // horizontal axis line
+                rules.append("svg:line")
+                    .attr("class", "axis")
+                    .attr("x1", x(d3.min(times)))
+                    .attr("x2", x(d3.max(times)))
+                    .attr("y1", y(d3.min(ydata)))
+                    .attr("y2", y(d3.min(ydata)));
 
                  // line path
                  vis.append("svg:path")
