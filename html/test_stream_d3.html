@@ -2,12 +2,13 @@
 <head>
     <link type="text/css" rel="stylesheet" href="line.css"/>
     <script type="text/javascript" src="d3/d3.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.time.js"></script>
     <script src=http://code.jquery.com/jquery.js></script>
 </head>
 <body>
     <script type="text/javascript">
         jQuery.getJSON(
-            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=100",
+            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=225",
             {format:"json"},
             // json object/string gets placed in data
             // values field of object is an array of strings with individual values
@@ -18,15 +19,16 @@
                 var ydata = new Array();
                 for (i in data.values) {
                     d3values[i] = jQuery.parseJSON(data.values[i]);
-                    times[i] = d3values[i].timestamp;
+                    // date object
+                    times[i] = new Date(d3values[i].timestamp);
                     ydata[i] = d3values[i].d;
                  }
-
+                //console.log(times)
                  var w = 500,
                      h = 500,
                      p = 50,
                      // i can use d3.time stuff to do native dates
-                     x = d3.scale.linear().domain([d3.min(times),d3.max(times)]).range([0,w]),
+                     x = d3.time.scale().domain([d3.min(times),d3.max(times)]).range([0,w]),
                      y = d3.scale.linear().domain([d3.min(ydata),d3.max(ydata)]).range([h,0]);
 
                  var vis = d3.select("body")
@@ -38,7 +40,7 @@
                                 .attr("transform", "translate(" + p + "," + p + ")");
 
 var rules = vis.selectAll("g.rule")
-    .data(x.ticks(10))
+    .data(x.ticks(d3.time.hours, 2))
   .enter().append("svg:g")
     .attr("class", "rule");
 
@@ -52,8 +54,8 @@ rules.append("svg:text")
     .attr("x", x)
     .attr("y", h + 20)
     .attr("dy", ".71em")
-    .attr("text-anchor", "end")
-    .text(x.tickFormat(10));
+    .attr("text-anchor", "middle")
+    .text(x.tickFormat(d3.time.hours, 2));
 
 rules.append("svg:text")
     .data(y.ticks(10))
