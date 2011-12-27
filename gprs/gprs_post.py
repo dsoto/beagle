@@ -14,8 +14,8 @@ def pause_and_read_serial():
 def post_nimbits_staggered(data_value):
 
     content = ''
-    content += 'secret=my-secret-code'
-    content += '&email=my-email'
+    content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
+    content += '&email=drdrsoto@gmail.com'
     content += '&value=%s&point=603_Test_Stream' % data_value
     content_length = len(content)
 
@@ -34,7 +34,7 @@ def post_nimbits_staggered(data_value):
         s.write(c)
         time.sleep(0.01)
 
-print 'opening serial port'
+#print 'opening serial port'
 s = serial.Serial('/dev/ttyUSB0',
                   baudrate=115200,
                   timeout=1)
@@ -52,7 +52,7 @@ def is_string_in_response(string, response):
             present = True
     return present
 
-data_value = 20.0
+#data_value = 20.0
 
 while (1):
     tw.log.info('-- top of loop --')
@@ -60,7 +60,7 @@ while (1):
     tw.log.info('flushing out serial port')
     pause_and_read_serial()
 
-    print 'testing using AT command'
+    #print 'testing using AT command'
     s.write('AT\r\n')
     response = pause_and_read_serial()
     if is_string_in_response('OK', response):
@@ -68,7 +68,7 @@ while (1):
     else:
         tw.log.error('bad AT response')
 
-    print 'activating GPRS'
+    #print 'activating GPRS'
     s.write('AT#GPRS=1\r\n')
     response = pause_and_read_serial()
     if is_string_in_response('OK', response):
@@ -76,7 +76,7 @@ while (1):
     else:
         tw.log.error('bad GPRS response')
 
-    print 'activating context'
+    #print 'activating context'
     s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
     response = pause_and_read_serial()
     if is_string_in_response('OK', response):
@@ -84,7 +84,7 @@ while (1):
     else:
         tw.log.error('bad CGDCONT response')
 
-    print 'socket dial'
+    #print 'socket dial'
     s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
     response = pause_and_read_serial()
     if is_string_in_response('CONNECT', response):
@@ -92,28 +92,33 @@ while (1):
     else:
         tw.log.error('bad SD response')
 
-    print 'posting to nimbits'
-    tw.log.info('data_value = ' + str(data_value))
+    #print 'posting to nimbits'
+
+    f = open('/sys/devices/platform/tsc/ain2')
+    data_value = f.read()
+    f.close()
+    tw.log.info('data_value = ' + str(data_value))    
     post_nimbits_staggered(data_value)
-    data_value += 0.1
-    if data_value > 30.0:
-        data_value = 20.0
-    print 'sleeping'
+    #data_value += 0.1
+    #if data_value > 30.0:
+    #    data_value = 20.0
+    #print 'sleeping'
     time.sleep(15) # need extra time for html response
-    print 'post response'
+    #print 'post response'
 
     response = pause_and_read_serial()
+    tw.log.info(response[0].strip())
     response = ''.join(response)
-    print '---'
+    #print '---'
     if '200 OK' in response:
         tw.log.info('nimbits POST successful')
-        print 'nimbits POST successful'
+        #print 'nimbits POST successful'
     else:
         tw.log.error('nimbits POST unsuccessful')
-        print 'nimbits POST unsuccessful'
-    print '---'
+        #print 'nimbits POST unsuccessful'
+    #print '---'
 
-    print 'deactivating GPRS'
+    #print 'deactivating GPRS'
     s.write('AT#GPRS=0\r\n')
     time.sleep(5)
     response = pause_and_read_serial()
