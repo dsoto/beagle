@@ -7,39 +7,40 @@
 </head>
 <body>
     <script type="text/javascript">
+        url =  "http://app.nimbits.com/service/series?"
+               + "email=drdrsoto@gmail.com"
+               + "&secret=01787ade-c6d6-4f9b-8b86-20850af010d9"
+               + "&point=603_Test_Stream"
+               + "&count=150";
+
         jQuery.getJSON(
-            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=150",
+            url,
             {format:"json"},
             // json object/string gets placed in data
             // values field of object is an array of strings with individual values
             // we lump these into an object named d3values
             function(data) {
-                var d3values = new Array();
                 var times = new Array();
                 var ydata = new Array();
-                for (i in data.values) {
-                    d3values[i] = jQuery.parseJSON(data.values[i]);
-                    d3values[i].d = d3values[i].d/4096.0*1.8*100;
+                for (i in data) {
+                    data[i].d = data[i].d/4096.0*1.8*100;
                     // date object
-                    times[i] = new Date(d3values[i].timestamp);
-                    ydata[i] = d3values[i].d;
+                    times[i] = new Date(data[i].timestamp);
+                    ydata[i] = data[i].d;
                  }
-                //console.log(times)
                  var w = 500,
                      h = 500,
                      p = 50,
-                     // i can use d3.time stuff to do native dates
                      x = d3.time.scale()
                                 .domain([d3.min(times),d3.max(times)])
                                 .range([0,w]),
                      y = d3.scale.linear()
                                  .domain([d3.min(ydata),d3.max(ydata)])
-                                 //.domain([500,600])
                                  .range([h,0]);
 
                  // create axes
                  var vis = d3.select("body")
-                             .data([d3values])
+                             .data([data])
                              .append("svg:svg")
                              .attr("width", w + p * 2)
                              .attr("height", h + p * 2)
@@ -56,7 +57,7 @@
 
                 // data points as circles
                 vis.selectAll("circle.line")
-                    .data(d3values)
+                    .data(data)
                     .enter().append("svg:circle")
                     .attr("class","line")
                     .attr("cx", function(d) { return x(d.timestamp);})
@@ -70,6 +71,7 @@
 
                  // vertical grid lines
                  vrules.append("svg:line")
+                     //.attr("class", function (d,i) {return i ? null : "axis";})
                      .attr("x1", x)
                      .attr("x2", x)
                      .attr("y1", 0)
@@ -82,10 +84,10 @@
                      .attr("dy", ".71em")
                      .attr("text-anchor", "middle")
                      //.text(x.tickFormat(d3.time.hours, 2));
-                     //.text(String);
                      .text(d3.time.format('%m-%d %H:%M'));
 
                 // vertical axis line
+                // right now this is redundant since a line gets inked for each data element
                 vrules.append("svg:line")
                     // axis has different stroke in css
                     .attr("class", "axis")
@@ -98,7 +100,6 @@
                     .data(y.ticks(10))
                     .enter().append("svg:g")
                     .attr("class", "rule");
-
 
                 // y tick text
                  hrules.append("svg:text")
