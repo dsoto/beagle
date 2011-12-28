@@ -85,7 +85,9 @@
                      .attr("y", h + 20)
                      .attr("dy", ".71em")
                      .attr("text-anchor", "middle")
-                     .text(x.tickFormat(d3.time.hours, 2));
+                     //.text(x.tickFormat(d3.time.hours, 2));
+                     //.text(String);
+                     .text(d3.time.format('%m-%d %H:%M'));
 
                 var hrules = vis.selectAll("g.hrule")
                     .data(y.ticks(10))
