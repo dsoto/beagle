@@ -19,6 +19,7 @@
                 var ydata = new Array();
                 for (i in data.values) {
                     d3values[i] = jQuery.parseJSON(data.values[i]);
+                    d3values[i].d = d3values[i].d/4096.0*1.8*100;
                     // date object
                     times[i] = new Date(d3values[i].timestamp);
                     ydata[i] = d3values[i].d;
