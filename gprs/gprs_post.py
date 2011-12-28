@@ -38,7 +38,7 @@ s = serial.Serial('/dev/ttyUSB0',
                   baudrate=115200,
                   timeout=1)
 
-db_connection = sqlite3.connect('./random.db')
+db_connection = sqlite3.connect('./database.db')
 db_cursor = db_connection.cursor()
 
 tw.quickSetup(file='gprs.log')
