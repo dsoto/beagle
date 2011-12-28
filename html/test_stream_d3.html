@@ -8,7 +8,7 @@
 <body>
     <script type="text/javascript">
         jQuery.getJSON(
-            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=225",
+            "http://app.nimbits.com/service/point?uuid=12a17a96-bc04-4e45-b129-ad33cae517e1&count=150",
             {format:"json"},
             // json object/string gets placed in data
             // values field of object is an array of strings with individual values
@@ -29,8 +29,13 @@
                      h = 500,
                      p = 50,
                      // i can use d3.time stuff to do native dates
-                     x = d3.time.scale().domain([d3.min(times),d3.max(times)]).range([0,w]),
-                     y = d3.scale.linear().domain([d3.min(ydata),d3.max(ydata)]).range([h,0]);
+                     x = d3.time.scale()
+                                .domain([d3.min(times),d3.max(times)])
+                                .range([0,w]),
+                     y = d3.scale.linear()
+                                 .domain([d3.min(ydata),d3.max(ydata)])
+                                 //.domain([500,600])
+                                 .range([h,0]);
 
                  // create axes
                  var vis = d3.select("body")
@@ -58,19 +63,10 @@
                     .attr("cy", function(d) { return y(d.d);})
                     .attr("r", 2);
 
-                 var vrules = vis.selectAll("g.rule")
+                 var vrules = vis.selectAll("g.vrule")
                      .data(x.ticks(d3.time.hours, 2))
                      .enter().append("svg:g")
                      .attr("class", "rule");
-
-                // vertical axis line
-                vrules.append("svg:line")
-                    // axis has different stroke in css
-                    .attr("class", "axis")
-                    .attr("x1", x(d3.min(times)))
-                    .attr("x2", x(d3.min(times)))
-                    .attr("y1", y(d3.min(ydata)))
-                    .attr("y2", y(d3.max(ydata)));
 
                  // vertical grid lines
                  vrules.append("svg:line")
@@ -89,23 +85,32 @@
                      //.text(String);
                      .text(d3.time.format('%m-%d %H:%M'));
 
+                // vertical axis line
+                vrules.append("svg:line")
+                    // axis has different stroke in css
+                    .attr("class", "axis")
+                    .attr("x1", x(d3.min(times)))
+                    .attr("x2", x(d3.min(times)))
+                    .attr("y1", y(d3.min(ydata)))
+                    .attr("y2", y(d3.max(ydata)));
+
                 var hrules = vis.selectAll("g.hrule")
                     .data(y.ticks(10))
                     .enter().append("svg:g")
                     .attr("class", "rule");
 
+
                 // y tick text
                  hrules.append("svg:text")
-                     .data(y.ticks(10))
                      .attr("y", y)
                      .attr("x", -10)
                      .attr("dy", ".35em")
                      .attr("text-anchor", "end")
                      .text(y.tickFormat(10));
+                     //.text(String);
 
                 // horizontal grid lines
                  hrules.append("svg:line")
-                     .data(y.ticks(10))
                      .attr("x1", x(d3.min(times)))
                      .attr("x2", x(d3.max(times)))
                      .attr("y1", y)
