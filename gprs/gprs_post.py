@@ -1,10 +1,9 @@
-# script uses easy gprs commands to download website
-# does not work every time run
-
 import serial
 import time
 import random
 import twiggy as tw
+import sqlite3
+import datetime as dt
 
 def pause_and_read_serial():
     time.sleep(1)
@@ -39,6 +38,8 @@ s = serial.Serial('/dev/ttyUSB0',
                   baudrate=115200,
                   timeout=1)
 
+db_connection = sqlite3.connect('./random.db')
+db_cursor = db_connection.cursor()
 
 tw.quickSetup(file='gprs.log')
 tw.log.info('---------------------')
@@ -66,7 +67,7 @@ while (1):
     if is_string_in_response('OK', response):
         tw.log.info('good AT response')
     else:
-        tw.log.error('bad AT response')
+        tw.log.warning('bad AT response')
 
     #print 'activating GPRS'
     s.write('AT#GPRS=1\r\n')
@@ -74,7 +75,7 @@ while (1):
     if is_string_in_response('OK', response):
         tw.log.info('good GPRS response')
     else:
-        tw.log.error('bad GPRS response')
+        tw.log.warning('bad GPRS response')
 
     #print 'activating context'
     s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
@@ -82,7 +83,7 @@ while (1):
     if is_string_in_response('OK', response):
         tw.log.info('good CGDCONT response')
     else:
-        tw.log.error('bad CGDCONT response')
+        tw.log.warning('bad CGDCONT response')
 
     #print 'socket dial'
     s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
@@ -90,24 +91,33 @@ while (1):
     if is_string_in_response('CONNECT', response):
         tw.log.info('good SD response')
     else:
-        tw.log.error('bad SD response')
+        tw.log.warning('bad SD response')
 
     #print 'posting to nimbits'
 
     f = open('/sys/devices/platform/tsc/ain2')
     data_value = f.read()
     f.close()
-    tw.log.info('data_value = ' + str(data_value))    
+    tw.log.info('data_value = ' + str(data_value))
     post_nimbits_staggered(data_value)
-    #data_value += 0.1
-    #if data_value > 30.0:
-    #    data_value = 20.0
     #print 'sleeping'
     time.sleep(15) # need extra time for html response
     #print 'post response'
 
     response = pause_and_read_serial()
-    tw.log.info(response[0].strip())
+    if len(response) > 0:
+        first_response = response[0].strip()
+    else:
+        first_response = 'No Response'
+
+    tw.log.info(first_response)
+
+    query_string=  '''insert into posts (time_stamp, value, response)
+                      values ('%s', %s, %s)''' % (dt.datetime.now(), data_value, first_response)
+
+    db_cursor.execute(query_string)
+    db_connection.commit()
+
     response = ''.join(response)
     #print '---'
     if '200 OK' in response:
@@ -125,7 +135,7 @@ while (1):
     if is_string_in_response('OK', response):
         tw.log.info('good GPRS off response')
     else:
-        tw.log.error('bad GPRS off response')
+        tw.log.warning('bad GPRS off response')
 
     # sleep until next minute
     time.sleep(60)
