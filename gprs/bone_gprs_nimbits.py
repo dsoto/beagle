@@ -36,18 +36,6 @@ def post_nimbits_staggered(data_value):
         s.write(c)
         time.sleep(0.01)
 
-s = serial.Serial('/dev/ttyUSB0',
-                  baudrate=115200,
-                  timeout=1)
-
-db_connection = sqlite3.connect('./database.db')
-db_cursor = db_connection.cursor()
-
-tw.quickSetup(file='gprs.log')
-tw.log.info('---------------------')
-tw.log.info('starting gprs_post.py')
-tw.log.info('---------------------')
-
 def is_string_in_response(string, response):
     present = False
     for r in response:
@@ -55,9 +43,7 @@ def is_string_in_response(string, response):
             present = True
     return present
 
-while (1):
-    tw.log.info('-- top of loop --')
-
+def initiate_modem():
     tw.log.info('flushing out serial port')
     pause_and_read_serial()
 
@@ -89,11 +75,45 @@ while (1):
     else:
         tw.log.warning('bad SD response')
 
-    f = open('/sys/devices/platform/tsc/ain2')
-    data_value = f.read()
-    f.close()
+def read_ain2():
+    num_avg = 10
+    data_value = 0
+    for i in range(num_avg):
+        f = open('/sys/devices/platform/tsc/ain2')
+        data_value += float(f.read())
+        f.close()
+    data_value = data_value / num_avg
+    return data_value
+
+def write_to_db():
+    query_string = 'insert into logs (time_stamp, value, response) values (?,?,?)'
+    db_cursor.execute(query_string, (dt.datetime.now(), data_value, first_response))
+    db_connection.commit()
+
+
+s = serial.Serial('/dev/ttyUSB0',
+                  baudrate=115200,
+                  timeout=1)
+
+db_connection = sqlite3.connect('./database.db')
+db_cursor = db_connection.cursor()
+
+tw.quickSetup(file='gprs.log')
+tw.log.info('---------------------')
+tw.log.info('starting gprs_post.py')
+tw.log.info('---------------------')
+
+
+while (1):
+    tw.log.info('-- top of loop --')
+
+    def initiate_modem()
+
+    data_value = read_ain2()
+
     tw.log.info('data_value = ' + str(data_value))
     post_nimbits_staggered(data_value)
+
     time.sleep(15) # need extra time for html response
 
     response = pause_and_read_serial()
@@ -104,10 +124,7 @@ while (1):
 
     tw.log.info(first_response)
 
-    query_string = 'insert into logs (time_stamp, value, response) values (?,?,?)'
-
-    db_cursor.execute(query_string, (dt.datetime.now(), data_value, first_response))
-    db_connection.commit()
+    write_to_db()
 
     response = ''.join(response)
     if '200 OK' in response:
