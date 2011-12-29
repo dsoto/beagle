@@ -110,13 +110,18 @@ while (1):
     else:
         first_response = 'No Response'
 
+    #first_response = 'HTTP/1.1 200 OK'
+
     tw.log.info(first_response)
 
-    query_string='''insert into logs (time_stamp, value, response) values ('%s', %s, '%s')''' % (dt.datetime.now(), data_value, first_response)
+    query_string='''insert into logs (time_stamp, value, response) values (?,?,?);'''
     tw.log.info(query_string)
 
-    db_cursor.execute(query_string)
+    db_cursor.execute(query_string, (dt.datetime.now(), data_value, first_response))
+    #db_cursor.execute("insert into logs (time_stamp, value, response) values ('?', ?, '?')",(dt.datetime.now(), data_value, first_response))
+    #time.sleep(5)    
     db_connection.commit()
+    #time.sleep(5)
 
     response = ''.join(response)
     #print '---'
