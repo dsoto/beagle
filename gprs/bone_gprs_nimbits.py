@@ -5,6 +5,8 @@ import twiggy as tw
 import sqlite3
 import datetime as dt
 
+stream_name = 'B_BONE_02'
+
 def pause_and_read_serial():
     time.sleep(1)
     response = s.readlines()
@@ -15,7 +17,8 @@ def post_nimbits_staggered(data_value):
     content = ''
     content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
     content += '&email=drdrsoto@gmail.com'
-    content += '&value=%s&point=603_Test_Stream' % data_value
+    content += '&value=%s' % data_value
+    content += '&point=' % stream_name
     content_length = len(content)
 
     post_string = ''
