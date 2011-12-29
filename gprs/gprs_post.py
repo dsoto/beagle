@@ -112,7 +112,7 @@ while (1):
 
     tw.log.info(first_response)
 
-    query_string=  '''insert into posts (time_stamp, value, response)
+    query_string=  '''insert into logs (time_stamp, value, response)
                       values ('%s', %s, %s)''' % (dt.datetime.now(), data_value, first_response)
 
     db_cursor.execute(query_string)
