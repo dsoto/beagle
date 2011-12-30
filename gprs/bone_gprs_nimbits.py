@@ -80,7 +80,13 @@ def read_ain2():
     data_value = 0
     for i in range(num_avg):
         f = open('/sys/devices/platform/tsc/ain2')
-        data_value += float(f.read())
+        while 1:
+            char = f.read(1)
+            if char == '\x00':
+                break
+            else:
+                data_value_string += char
+            data_value += float(data_value_string)
         f.close()
     data_value = data_value / num_avg
     return data_value
