@@ -53,7 +53,7 @@ def read_serial_arduino():
             serial_response=ord(s.read())
         except:
             tw.log.trace('error').warning('bad serial read from arduino')
-
+            serial_response = 0
         tw.log.info("arduino temp response = " + str(serial_response))
         data_value += float(serial_response)
         time.sleep(0.5)
@@ -68,7 +68,7 @@ while 1:
 
     if serial_response:
         data_value = serial_response / 1024.0 * 5 * 100
-
+        tw.log.info('avg value = ' + str(data_value))
         post_nimbits(data_value)
         post_pachube(data_value)
 
