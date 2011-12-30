@@ -5,7 +5,7 @@ import twiggy as tw
 import sqlite3
 import datetime as dt
 
-stream_name = 'B_BONE_02'
+stream_name = '603_Test_Stream'
 
 def pause_and_read_serial():
     time.sleep(1)
@@ -80,15 +80,19 @@ def read_ain2():
     data_value = 0
     for i in range(num_avg):
         f = open('/sys/devices/platform/tsc/ain2')
+        data_value_string = ''
         while 1:
             char = f.read(1)
             if char == '\x00':
                 break
             else:
                 data_value_string += char
-            data_value += float(data_value_string)
+        tw.log.info(data_value_string)
+        data_value += float(data_value_string)
         f.close()
+        time.sleep(0.1)
     data_value = data_value / num_avg
+    tw.log.info('avg = ' + str(data_value))
     return data_value
 
 def write_to_db():
