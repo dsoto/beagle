@@ -29,7 +29,6 @@ def post_nimbits(value):
     else:
         tw.log.error(log_message)
 
-
 def post_pachube(value):
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":value}]}
     try:
@@ -43,17 +42,23 @@ def post_pachube(value):
         tw.log.error(log_message)
 
 def read_serial_arduino():
-    serial_response = s.write(chr(0x00))
-    tw.log.info("arduino write response = " + str(serial_response))
-    time.sleep(0.5)
-    serial_response = None
-    try:
-        serial_response=ord(s.read())
-    except:
-        tw.log.trace('error').warning('bad serial read from arduino')
+    num_samples = 10
+    data_value = 0
+    for i in range(num_samples):
+        serial_response = s.write(chr(0x00))
+        tw.log.info("arduino write response = " + str(serial_response))
+        time.sleep(0.5)
+        serial_response = None
+        try:
+            serial_response=ord(s.read())
+        except:
+            tw.log.trace('error').warning('bad serial read from arduino')
 
-    tw.log.info("arduino temp response = " + str(serial_response))
-    return serial_response
+        tw.log.info("arduino temp response = " + str(serial_response))
+        data_value += float(serial_response)
+        time.sleep(0.5)
+    data_value = data_value / num_samples
+    return data_value
 
 # sleep for a minute, send random number to pachube in json format
 while 1:
