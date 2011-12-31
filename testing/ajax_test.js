@@ -3,6 +3,7 @@ document.writeln("hello");
 var now = new Date;
 console.log(now);
 var time_end = now.getTime();
+console.log(time_end);
 var time_start = time_end - 2.0 * 24 * 60 * 60 * 1000;
 
 // nimbits url
@@ -14,9 +15,9 @@ url =  "http://app.nimbits.com/service/series?"
        + "&ed=" + time_end;
 
 // pachube url
-url =   "http://api.pachube.com/v2/feeds/39985/datastreams/01.json?"
-      + "start=2011-12-13T00:00:00Z&"
-      + "end=2011-12-13T01:00:00Z&"
+url =   "http://api.pachube.com/v2/feeds/43073/datastreams/01.json?"
+      + "start=2011-12-31T17:00:00Z&"
+      + "end=2011-12-31T23:00:00Z&"
       + "interval=0";
 
 headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
@@ -28,5 +29,5 @@ jQuery.ajax({
     url: url,
     headers:headers,
     success: function(data){
-        console.log(data);}
+        console.log(data.datapoints);}
     });
