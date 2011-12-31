@@ -89,7 +89,7 @@ def read_ain2():
                 break
             else:
                 data_value_string += char
-        tw.log.info(data_value_string)
+        #tw.log.info(data_value_string)
         data_value += float(data_value_string)
         f.close()
         time.sleep(1.0)
