@@ -6,7 +6,8 @@ import sqlite3
 import datetime as dt
 import requests
 
-stream_name = '603_Test_Stream'
+#stream_name = '603_Test_Stream'
+stream_name = 'Modi_Lab'
 
 def pause_and_read_serial():
     time.sleep(1)
