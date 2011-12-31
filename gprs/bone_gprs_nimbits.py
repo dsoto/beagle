@@ -76,7 +76,7 @@ def initiate_modem():
         tw.log.warning('bad SD response')
 
 def read_ain2():
-    num_avg = 10
+    num_avg = 20
     data_value = 0
     for i in range(num_avg):
         f = open('/sys/devices/platform/tsc/ain2')
@@ -90,7 +90,7 @@ def read_ain2():
         tw.log.info(data_value_string)
         data_value += float(data_value_string)
         f.close()
-        time.sleep(0.1)
+        time.sleep(1.0)
     data_value = data_value / num_avg
     tw.log.info('avg = ' + str(data_value))
     return data_value
@@ -151,5 +151,5 @@ while (1):
         tw.log.warning('bad GPRS off response')
 
     # sleep until next minute
-    time.sleep(60)
+    time.sleep(5*60)
 
