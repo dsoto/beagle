@@ -4,6 +4,7 @@ import random
 import twiggy as tw
 import sqlite3
 import datetime as dt
+import requests
 
 stream_name = '603_Test_Stream'
 
@@ -113,6 +114,19 @@ def parse_response():
 
     return first_response
 
+def post_pachube(value):
+    headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
+    data={"version":"1.0.0","datastreams":[{"id":"01","current_value":value}]}
+    try:
+        r = requests.put('http://api.pachube.com/v2/feeds/43073',headers=headers,data=json.dumps(data))
+    except:
+        tw.log.trace('error').error('bad put to pachube')
+    log_message = 'pachube response value = ' + str(r.status_code)
+    if r.status_code == 200:
+        tw.log.info(log_message)
+    else:
+        tw.log.error(log_message)
+
 def write_to_db():
     query_string = 'insert into logs (time_stamp, value, response) values (?,?,?)'
     db_cursor.execute(query_string, (dt.datetime.now(), data_value, first_response))
@@ -141,6 +155,7 @@ while (1):
 
     initiate_modem()
     post_nimbits_staggered(data_value)
+    post_pachube(data_value)
     first_response = parse_response()
     write_to_db()
 
