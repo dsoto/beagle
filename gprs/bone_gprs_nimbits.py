@@ -105,6 +105,12 @@ def parse_response():
         first_response = 'No Response'
 
     tw.log.info(first_response)
+
+    if '200 OK' in first_response:
+        tw.log.info('nimbits POST successful')
+    else:
+        tw.log.error('nimbits POST unsuccessful')
+
     return first_response
 
 def write_to_db():
@@ -138,11 +144,6 @@ while (1):
     first_response = parse_response()
     write_to_db()
 
-    response = ''.join(response)
-    if '200 OK' in response:
-        tw.log.info('nimbits POST successful')
-    else:
-        tw.log.error('nimbits POST unsuccessful')
 
     s.write('AT#GPRS=0\r\n')
     time.sleep(5)
