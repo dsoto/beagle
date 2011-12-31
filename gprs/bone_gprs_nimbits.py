@@ -95,6 +95,18 @@ def read_ain2():
     tw.log.info('avg = ' + str(data_value))
     return data_value
 
+def parse_response():
+    time.sleep(15) # need extra time for html response
+
+    response = pause_and_read_serial()
+    if len(response) > 0:
+        first_response = response[0].strip()
+    else:
+        first_response = 'No Response'
+
+    tw.log.info(first_response)
+    return first_response
+
 def write_to_db():
     query_string = 'insert into logs (time_stamp, value, response) values (?,?,?)'
     db_cursor.execute(query_string, (dt.datetime.now(), data_value, first_response))
@@ -117,23 +129,13 @@ tw.log.info('---------------------')
 while (1):
     tw.log.info('-- top of loop --')
 
-    initiate_modem()
-
     data_value = read_ain2()
 
     tw.log.info('data_value = ' + str(data_value))
+
+    initiate_modem()
     post_nimbits_staggered(data_value)
-
-    time.sleep(15) # need extra time for html response
-
-    response = pause_and_read_serial()
-    if len(response) > 0:
-        first_response = response[0].strip()
-    else:
-        first_response = 'No Response'
-
-    tw.log.info(first_response)
-
+    first_response = parse_response()
     write_to_db()
 
     response = ''.join(response)
