@@ -1,17 +1,19 @@
-document.writeln("Temperature in 134F");
 
-// create date object set to current time
+// create date ranges from midnight - midnight local time
 var now = new Date();
 var date_end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-date_end.setDate(date_end.getDate() + 1);
+date_end.setDate(date_end.getDate() + 2);
 var date_start = new Date(date_end);
-date_start.setDate(date_start.getDate() - 1);
+date_start.setDate(date_start.getDate() - 3);
 
 // pachube url
+// the iso dates are on UTC
 var url = "http://api.pachube.com/v2/feeds/43073/datastreams/01.json?"
         + "start=" + d3.time.format.iso(date_start)
         + "&end=" + d3.time.format.iso(date_end)
-        + "&interval=300";
+        + "&interval=900";
+
+console.log(url);
 
 var headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"};
 
@@ -19,6 +21,7 @@ jQuery.ajax({
     url: url,
     headers: headers,
     success: function (data) {
+        console.log(data);
         var times = [],
             ydata = [];
         for (i in data.datapoints) {
@@ -27,11 +30,12 @@ jQuery.ajax({
             data.datapoints[i].at = times[i];
             ydata[i] = data.datapoints[i].value;
         }
+        console.log(d3.time.format.iso(d3.max(times)));
         var range_round = 1,
             yrange_max = Math.ceil(d3.max(ydata) / range_round) * range_round,
             yrange_min = Math.floor(d3.min(ydata) / range_round) * range_round,
-            w = 500,
-            h = 250,
+            w = 1000,
+            h = 500,
             p = 50,
             x = d3.time.scale.utc()
                 .domain([date_start, date_end])
@@ -66,19 +70,18 @@ jQuery.ajax({
             .attr("cy", function (d) { return y(d.value); })
             .attr("r", 2);
         var vrules = vis.selectAll("g.vrule")
-                .data(x.ticks(d3.time.hours, 6))
+                .data(x.ticks(d3.time.hours, 12))
                 .enter().append("svg:g")
                 .attr("class", "rule");
 
-        // vertical grid lines
+        //vertical grid lines
         vrules.append("svg:line")
             //.attr("class", function (d,i) {return i ? null : "axis";})
             .attr("x1", x)
             .attr("x2", x)
             .attr("y1", 0)
             .attr("y2", h - 1);
-
-        // x tick text
+        //x tick text
         vrules.append("svg:text")
             .attr("x", x)
             .attr("y", h + 20)
@@ -87,8 +90,8 @@ jQuery.ajax({
             //.text(x.tickFormat(d3.time.hours, 2));
             .text(d3.time.format('%m-%d %H:%M'));
 
-        // vertical axis line
-        // right now this is redundant since a line gets inked for each data element
+        //vertical axis line
+        //right now this is redundant since a line gets inked for each data element
         vrules.append("svg:line")
             // axis has different stroke in css
             .attr("class", "axis")
