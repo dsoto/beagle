@@ -69,7 +69,7 @@ jQuery.ajax({
                     .attr("cx", function(d) { return x(d.at);})
                     .attr("cy", function(d) { return y(d.value);})
                     .attr("r", 2);
-                                    var vrules = vis.selectAll("g.vrule")
+                var vrules = vis.selectAll("g.vrule")
                      .data(x.ticks(d3.time.hours, 6))
                      .enter().append("svg:g")
                      .attr("class", "rule");
