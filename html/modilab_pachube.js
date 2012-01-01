@@ -2,21 +2,17 @@ document.writeln("Temperature in 134F");
 
 // create date object set to current time
 var now = new Date;
-
-// create start and end points in seconds
-var time_end_seconds = now.getTime();
-var time_start_seconds = time_end_seconds - 1.0 * 24 * 60 * 60 * 1000;
-
-// create date objects from seconds
-var time_end = new Date(time_end_seconds);
-var time_start = new Date(time_start_seconds);
+var date_end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+date_end.setDate(date_end.getDate() + 1);
+var date_start = new Date(date_end);
+date_start.setDate(date_start.getDate() - 1);
 
 // pachube url
 url =   "http://api.pachube.com/v2/feeds/43073/datastreams/01.json?"
       //+ "start=2011-12-31T17:00:00Z&"
-      + "start=" + d3.time.format.iso(time_start)
+      + "start=" + d3.time.format.iso(date_start)
       //+ "end=2012-01-01T12:00:00Z&"
-      + "&end=" + d3.time.format.iso(time_end)
+      + "&end=" + d3.time.format.iso(date_end)
       + "&interval=300";
 
 headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
@@ -33,15 +29,19 @@ jQuery.ajax({
                     data.datapoints[i].at = times[i];
                     ydata[i] = data.datapoints[i].value;
                  }
+                 var range_round = 1;
+                 yrange_max = Math.ceil( d3.max(ydata) / range_round) * range_round;
+                 yrange_min = Math.floor( d3.min(ydata) / range_round) * range_round;
                  var w = 500,
                      h = 250,
                      p = 50,
                      x = d3.time.scale.utc()
                                 //.domain([d3.min(times),d3.max(times)])
-                                .domain([time_start, time_end])
+                                .domain([date_start, date_end])
                                 .range([0,w]),
                      y = d3.scale.linear()
-                                 .domain([d3.min(ydata),d3.max(ydata)])
+                                 //.domain([d3.min(ydata),d3.max(ydata)])
+                                 .domain([yrange_min, yrange_max])
                                  .range([h,0]);
 
                  // create axes
@@ -96,10 +96,10 @@ jQuery.ajax({
                 vrules.append("svg:line")
                     // axis has different stroke in css
                     .attr("class", "axis")
-                    .attr("x1", x(time_start))
-                    .attr("x2", x(time_start))
-                    .attr("y1", y(d3.min(ydata)))
-                    .attr("y2", y(d3.max(ydata)));
+                    .attr("x1", x(date_start))
+                    .attr("x2", x(date_start))
+                    .attr("y1", y(yrange_min))
+                    .attr("y2", y(yrange_max));
 
                 var hrules = vis.selectAll("g.hrule")
                     .data(y.ticks(10))
@@ -117,18 +117,18 @@ jQuery.ajax({
 
                 // horizontal grid lines
                  hrules.append("svg:line")
-                     .attr("x1", x(time_start))
-                     .attr("x2", x(time_end))
+                     .attr("x1", x(date_start))
+                     .attr("x2", x(date_end))
                      .attr("y1", y)
                      .attr("y2", y);
 
                 // horizontal axis line
                 hrules.append("svg:line")
                     .attr("class", "axis")
-                    .attr("x1", x(time_start))
-                    .attr("x2", x(time_end))
-                    .attr("y1", y(d3.min(ydata)))
-                    .attr("y2", y(d3.min(ydata)));
+                    .attr("x1", x(date_start))
+                    .attr("x2", x(date_end))
+                    .attr("y1", y(yrange_min))
+                    .attr("y2", y(yrange_min));
 
 
         }
