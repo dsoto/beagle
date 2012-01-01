@@ -5,7 +5,7 @@ var now = new Date;
 
 // create start and end points in seconds
 var time_end_seconds = now.getTime();
-var time_start_seconds = time_end_seconds - 2.0 * 24 * 60 * 60 * 1000;
+var time_start_seconds = time_end_seconds - 1.0 * 24 * 60 * 60 * 1000;
 
 // create date objects from seconds
 var time_end = new Date(time_end_seconds);
@@ -34,10 +34,11 @@ jQuery.ajax({
                     ydata[i] = data.datapoints[i].value;
                  }
                  var w = 500,
-                     h = 500,
+                     h = 250,
                      p = 50,
                      x = d3.time.scale.utc()
-                                .domain([d3.min(times),d3.max(times)])
+                                //.domain([d3.min(times),d3.max(times)])
+                                .domain([time_start, time_end])
                                 .range([0,w]),
                      y = d3.scale.linear()
                                  .domain([d3.min(ydata),d3.max(ydata)])
@@ -69,7 +70,7 @@ jQuery.ajax({
                     .attr("cy", function(d) { return y(d.value);})
                     .attr("r", 2);
                                     var vrules = vis.selectAll("g.vrule")
-                     .data(x.ticks(d3.time.hours, 1))
+                     .data(x.ticks(d3.time.hours, 6))
                      .enter().append("svg:g")
                      .attr("class", "rule");
 
@@ -95,8 +96,8 @@ jQuery.ajax({
                 vrules.append("svg:line")
                     // axis has different stroke in css
                     .attr("class", "axis")
-                    .attr("x1", x(d3.min(times)))
-                    .attr("x2", x(d3.min(times)))
+                    .attr("x1", x(time_start))
+                    .attr("x2", x(time_start))
                     .attr("y1", y(d3.min(ydata)))
                     .attr("y2", y(d3.max(ydata)));
 
@@ -116,16 +117,16 @@ jQuery.ajax({
 
                 // horizontal grid lines
                  hrules.append("svg:line")
-                     .attr("x1", x(d3.min(times)))
-                     .attr("x2", x(d3.max(times)))
+                     .attr("x1", x(time_start))
+                     .attr("x2", x(time_end))
                      .attr("y1", y)
                      .attr("y2", y);
 
                 // horizontal axis line
                 hrules.append("svg:line")
                     .attr("class", "axis")
-                    .attr("x1", x(d3.min(times)))
-                    .attr("x2", x(d3.max(times)))
+                    .attr("x1", x(time_start))
+                    .attr("x2", x(time_end))
                     .attr("y1", y(d3.min(ydata)))
                     .attr("y2", y(d3.min(ydata)));
 
