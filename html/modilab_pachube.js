@@ -45,7 +45,7 @@ jQuery.ajax({
                 .range([h, 0]);
 
         // create axes
-        var vis = d3.select("body")
+        var vis = d3.select("#graph")
                              .data([data.datapoints])
                              .append("svg:svg")
                              .attr("width", w + p * 2)
