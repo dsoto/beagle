@@ -70,7 +70,6 @@ def initiate_modem():
             tw.log.info('good GPRS response')
         else:
             tw.log.warning('bad GPRS response')
-            continue
 
         s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
         response = pause_and_read_serial()
