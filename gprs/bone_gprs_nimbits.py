@@ -80,8 +80,8 @@ def initiate_modem():
             break
         else:
             tw.log.warning('bad SD response ' + str(connection_attempt))
-        connection_attempt += 1
-        time.sleep(5)
+            time.sleep(5)
+            connection_attempt += 1
 
 def read_ain2():
     num_avg = 20
@@ -162,8 +162,8 @@ while (1):
 
     initiate_modem()
     post_nimbits_staggered(data_value)
-    post_pachube(data_value)
     first_response = parse_response()
+    post_pachube(data_value)
     write_to_db()
 
 
