@@ -47,32 +47,39 @@ def is_string_in_response(string, response):
     return present
 
 def initiate_modem():
-    tw.log.info('flushing out serial port')
-    pause_and_read_serial()
-
-    s.write('AT\r\n')
-    response = pause_and_read_serial()
-    if is_string_in_response('OK', response):
-        tw.log.info('good AT response')
-    else:
-        tw.log.warning('bad AT response')
-
-    s.write('AT#GPRS=1\r\n')
-    response = pause_and_read_serial()
-    if is_string_in_response('OK', response):
-        tw.log.info('good GPRS response')
-    else:
-        tw.log.warning('bad GPRS response')
-
-    s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
-    response = pause_and_read_serial()
-    if is_string_in_response('OK', response):
-        tw.log.info('good CGDCONT response')
-    else:
-        tw.log.warning('bad CGDCONT response')
-
-    connection_attempt = 1
+    connection_attempt = 0
     while 1:
+        connection_attempt += 1
+
+        tw.log.info('connection attempt ' + str(connect_attempt))
+
+        tw.log.info('flushing out serial port')
+        pause_and_read_serial()
+
+        s.write('AT\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('OK', response):
+            tw.log.info('good AT response')
+        else:
+            tw.log.warning('bad AT response')
+            continue
+
+        s.write('AT#GPRS=1\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('OK', response):
+            tw.log.info('good GPRS response')
+        else:
+            tw.log.warning('bad GPRS response')
+            continue
+
+        s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('OK', response):
+            tw.log.info('good CGDCONT response')
+        else:
+            tw.log.warning('bad CGDCONT response')
+            continue
+
         s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
         response = pause_and_read_serial()
         if is_string_in_response('CONNECT', response):
@@ -83,8 +90,8 @@ def initiate_modem():
             tw.log.info('raw SD response')
             for r in response:
                 tw.log.info(r.strip())
-            time.sleep(5)
-            connection_attempt += 1
+            continue
+
 
 def read_ain2():
     num_avg = 20
