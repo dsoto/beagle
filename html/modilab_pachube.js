@@ -2,7 +2,7 @@
 // create date ranges from midnight - midnight local time
 var now = new Date();
 var date_end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-date_end.setDate(date_end.getDate() + 2);
+date_end.setDate(date_end.getDate() + 1);
 var date_start = new Date(date_end);
 date_start.setDate(date_start.getDate() - 3);
 
