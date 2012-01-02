@@ -77,7 +77,7 @@ def initiate_modem():
         response = pause_and_read_serial()
         tw.log.info('raw SD response')
         for r in response:
-            tw.log.info(response.strip())
+            tw.log.info(r.strip())
         if is_string_in_response('CONNECT', response):
             tw.log.info('good SD response ' + str(connection_attempt))
             break
