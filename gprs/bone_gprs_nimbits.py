@@ -75,6 +75,9 @@ def initiate_modem():
     while 1:
         s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
         response = pause_and_read_serial()
+        tw.log.info('raw SD response')
+        for r in response:
+            tw.log.info(response.strip())
         if is_string_in_response('CONNECT', response):
             tw.log.info('good SD response ' + str(connection_attempt))
             break
