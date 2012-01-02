@@ -71,12 +71,17 @@ def initiate_modem():
     else:
         tw.log.warning('bad CGDCONT response')
 
-    s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
-    response = pause_and_read_serial()
-    if is_string_in_response('CONNECT', response):
-        tw.log.info('good SD response')
-    else:
-        tw.log.warning('bad SD response')
+    connection_attempt = 1
+    while 1:
+        s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('CONNECT', response):
+            tw.log.info('good SD response ' + connection_attempt)
+            break
+        else:
+            tw.log.warning('bad SD response ' + connection_attempt)
+        connection_attempt += 1
+        time.sleep(5)
 
 def read_ain2():
     num_avg = 20
