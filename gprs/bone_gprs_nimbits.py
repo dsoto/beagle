@@ -51,7 +51,7 @@ def initiate_modem():
     while 1:
         connection_attempt += 1
 
-        tw.log.info('connection attempt ' + str(connect_attempt))
+        tw.log.info('connection attempt ' + str(connection_attempt))
 
         tw.log.info('flushing out serial port')
         pause_and_read_serial()
