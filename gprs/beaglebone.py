@@ -7,6 +7,29 @@ import datetime as dt
 import requests
 import json
 
+def post_nimbits_http(stream, value):
+    nimbits_data = {"email":"drdrsoto@gmail.com",
+                    "secret":"01787ade-c6d6-4f9b-8b86-20850af010d9",
+                    "point":stream,
+                    "value":value}
+
+    try:
+        r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
+    except:
+        tw.log.trace('error').error('bad post to nimbits')
+    log_message = 'nimbits response value = ' + str(r.status_code)
+    if r.status_code == 200:
+        tw.log.info(log_message)
+    else:
+        tw.log.error(log_message)
+    return r.status_code
+
+def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
+    query_string = 'insert into logs (time_stamp, value, response) values (?,?,?)'
+    db_cursor.execute(query_string, (time_stamp, data_value, response))
+    db_connection.commit()
+
+
 
 
 def is_string_in_response(string, response):
@@ -104,28 +127,6 @@ def post_pachube_http(value):
     else:
         tw.log.error(log_message)
 
-def post_nimbits_http(stream, value):
-    nimbits_data = {"email":"drdrsoto@gmail.com",
-                    "secret":"01787ade-c6d6-4f9b-8b86-20850af010d9",
-                    "point":stream,
-                    "value":value}
-
-    try:
-        r = requests.post("http://app.nimbits.com/service/currentvalue", data=nimbits_data)
-    except:
-        tw.log.trace('error').error('bad post to nimbits')
-    log_message = 'nimbits response value = ' + str(r.status_code)
-    if r.status_code == 200:
-        tw.log.info(log_message)
-    else:
-        tw.log.error(log_message)
-    return r.status_code
-
-
-def write_to_db():
-    query_string = 'insert into logs (time_stamp, value, response) values (?,?,?)'
-    db_cursor.execute(query_string, (dt.datetime.now(), data_value, first_response))
-    db_connection.commit()
 
 
 
