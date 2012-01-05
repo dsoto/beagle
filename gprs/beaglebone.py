@@ -29,7 +29,29 @@ def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
     db_cursor.execute(query_string, (time_stamp, data_value, response))
     db_connection.commit()
 
+def post_nimbits_staggered(data_value):
 
+    content = ''
+    content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
+    content += '&email=drdrsoto@gmail.com'
+    content += '&value=%s' % data_value
+    content += '&point=%s' % stream_name
+    content_length = len(content)
+
+    post_string = ''
+    post_string += 'POST /service/currentvalue HTTP/1.1\r\n'
+    post_string += 'Host: app.nimbits.com\r\n'
+    post_string += 'Content-Length: %s\r\n' % content_length
+    post_string += 'Content-Type: application/x-www-form-urlencoded\r\n'
+    post_string += 'Accept-Encoding: identity\r\n'
+    post_string += 'Accept: */*\r\n'
+    post_string += 'User-Agent: pysoto\r\n\r\n'
+    post_string += content
+
+    # hack to work around possible 128 character limit
+    for c in post_string:
+        s.write(c)
+        time.sleep(0.01)
 
 
 def is_string_in_response(string, response):
@@ -38,6 +60,7 @@ def is_string_in_response(string, response):
         if string in r:
             present = True
     return present
+
 
 def initiate_modem():
     tw.log.info('flushing out serial port')

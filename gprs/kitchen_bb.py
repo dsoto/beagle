@@ -49,10 +49,10 @@ while (1):
 
     tw.log.info('data_value = ' + str(data_value))
 
-    initiate_modem()
-    post_nimbits_staggered(data_value)
-    first_response = parse_response()
-    write_to_db()
+    bb.initiate_modem()
+    bb.post_nimbits_staggered(data_value)
+    first_response = bb.parse_response()
+    bb.write_to_db()
     post_custom_server('kitchen', data_value, time_stamp)
 
     s.write('AT#GPRS=0\r\n')
