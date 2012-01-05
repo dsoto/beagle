@@ -53,14 +53,12 @@ def post_nimbits_staggered(data_value, stream_name, s):
         s.write(c)
         time.sleep(0.01)
 
-
 def is_string_in_response(string, response):
     present = False
     for r in response:
         if string in r:
             present = True
     return present
-
 
 def initiate_modem(s):
     tw.log.info('flushing out serial port')
@@ -99,6 +97,7 @@ def initiate_modem(s):
             time.sleep(5)
             connection_attempt += 1
 
+
 def read_ain2():
     num_avg = 20
     data_value = 0
@@ -122,7 +121,7 @@ def read_ain2():
 def parse_response(s):
     time.sleep(15) # need extra time for html response
 
-    response = pause_and_read_serial()
+    response = pause_and_read_serial(s)
     if len(response) > 0:
         first_response = response[0].strip()
     else:
