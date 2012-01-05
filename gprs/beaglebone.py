@@ -29,7 +29,7 @@ def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
     db_cursor.execute(query_string, (time_stamp, data_value, response))
     db_connection.commit()
 
-def post_nimbits_staggered(data_value):
+def post_nimbits_staggered(data_value, stream_name):
 
     content = ''
     content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
