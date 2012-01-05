@@ -9,8 +9,8 @@ import json
 import beaglebone as bb
 
 # logging variables
-#stream_name = '603_Test_Stream'
-stream_name = 'Modi_Lab'
+stream_name = '603_Test_Stream'
+#stream_name = 'Modi_Lab'
 
 # modem hardware
 s = serial.Serial('/dev/ttyUSB0',
@@ -45,7 +45,7 @@ while (1):
 
     data_value = bb.read_ain2()
 
-    time_stamp = datetime.datetime.now().isoformat()
+    time_stamp = dt.datetime.now().isoformat()
 
     tw.log.info('data_value = ' + str(data_value))
 
