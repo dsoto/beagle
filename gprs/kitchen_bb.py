@@ -57,7 +57,7 @@ while (1):
 
     s.write('AT#GPRS=0\r\n')
     time.sleep(5)
-    response = bb.pause_and_read_serial()
+    response = bb.pause_and_read_serial(s)
     if is_string_in_response('OK', response):
         tw.log.info('good GPRS off response')
     else:

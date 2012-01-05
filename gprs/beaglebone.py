@@ -151,7 +151,7 @@ def post_pachube_http(value):
         tw.log.error(log_message)
 
 
-def pause_and_read_serial():
+def pause_and_read_serial(s):
     time.sleep(1)
     response = s.readlines()
     return response
