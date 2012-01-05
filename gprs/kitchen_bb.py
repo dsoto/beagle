@@ -51,8 +51,8 @@ while (1):
 
     bb.initiate_modem()
     bb.post_nimbits_staggered(data_value)
-    first_response = bb.parse_response()
-    bb.write_to_db()
+    first_response = bb.parse_response(s)
+    bb.write_to_db(time_stamp, data_value, first_response, db_cursor, db_connection)
     post_custom_server('kitchen', data_value, time_stamp)
 
     s.write('AT#GPRS=0\r\n')

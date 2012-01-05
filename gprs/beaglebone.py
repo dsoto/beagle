@@ -62,26 +62,26 @@ def is_string_in_response(string, response):
     return present
 
 
-def initiate_modem():
+def initiate_modem(s):
     tw.log.info('flushing out serial port')
-    pause_and_read_serial()
+    pause_and_read_serial(s)
 
     s.write('AT\r\n')
-    response = pause_and_read_serial()
+    response = pause_and_read_serial(s)
     if is_string_in_response('OK', response):
         tw.log.info('good AT response')
     else:
         tw.log.warning('bad AT response')
 
     s.write('AT#GPRS=1\r\n')
-    response = pause_and_read_serial()
+    response = pause_and_read_serial(s)
     if is_string_in_response('OK', response):
         tw.log.info('good GPRS response')
     else:
         tw.log.warning('bad GPRS response')
 
     s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
-    response = pause_and_read_serial()
+    response = pause_and_read_serial(s)
     if is_string_in_response('OK', response):
         tw.log.info('good CGDCONT response')
     else:
@@ -90,7 +90,7 @@ def initiate_modem():
     connection_attempt = 1
     while 1:
         s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
-        response = pause_and_read_serial()
+        response = pause_and_read_serial(s)
         if is_string_in_response('CONNECT', response):
             tw.log.info('good SD response ' + str(connection_attempt))
             break
@@ -119,7 +119,7 @@ def read_ain2():
     tw.log.info('avg = ' + str(data_value))
     return data_value
 
-def parse_response():
+def parse_response(s):
     time.sleep(15) # need extra time for html response
 
     response = pause_and_read_serial()
