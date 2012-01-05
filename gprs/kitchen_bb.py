@@ -49,7 +49,7 @@ while (1):
 
     tw.log.info('data_value = ' + str(data_value))
 
-    bb.initiate_modem()
+    bb.initiate_modem(s)
     bb.post_nimbits_staggered(data_value)
     first_response = bb.parse_response(s)
     bb.write_to_db(time_stamp, data_value, first_response, db_cursor, db_connection)
