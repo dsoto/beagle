@@ -10,7 +10,6 @@ import beaglebone as bb
 
 # logging variables
 stream_name = '603_Test_Stream'
-#stream_name = 'Modi_Lab'
 
 # modem hardware
 s = serial.Serial('/dev/ttyUSB0',
@@ -22,9 +21,9 @@ db_connection = sqlite3.connect('./database.db')
 db_cursor = db_connection.cursor()
 
 # set up logging
-tw.quickSetup(file='gprs.log')
+tw.quickSetup(file='kitchen.log')
 tw.log.info('---------------------')
-tw.log.info('starting gprs_post.py')
+tw.log.info('starting kitchen_bb.py')
 tw.log.info('---------------------')
 
 while (1):
@@ -56,4 +55,3 @@ while (1):
 
     # sleep for a few minutes
     time.sleep(5*60)
-
