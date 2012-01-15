@@ -27,19 +27,6 @@ tw.log.info('---------------------')
 tw.log.info('starting gprs_post.py')
 tw.log.info('---------------------')
 
-def post_custom_server(tag, value, time_stamp):
-    ip_address = '50.56.226.226'
-    port = '8000'
-    request_string = 'http://%s:%s/?tag=%s&value=%s&time_stamp=%s'
-    request_string = request_string % (ip_address,
-                                       port,
-                                       tag,
-                                       value,
-                                       time_stamp)
-    r = requests.get(request_string)
-
-
-
 while (1):
     tw.log.info('-- top of loop --')
 
@@ -49,11 +36,11 @@ while (1):
 
     tw.log.info('data_value = ' + str(data_value))
 
-    bb.initiate_modem(s)
-    bb.post_nimbits_staggered(data_value, stream_name, s)
+    bb.initiate_modem_nimbits(s)
+    bb.post_nimbits_gprs(data_value, stream_name, s)
     first_response = bb.parse_response(s)
     bb.write_to_db(time_stamp, data_value, first_response, db_cursor, db_connection)
-    post_custom_server('kitchen', data_value, time_stamp)
+    bb.post_custom_server_http('kitchen', data_value, time_stamp)
 
     s.write('AT#GPRS=0\r\n')
     time.sleep(5)
