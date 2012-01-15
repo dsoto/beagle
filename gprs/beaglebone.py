@@ -6,6 +6,8 @@ import sqlite3
 import datetime as dt
 import requests
 import json
+import nimbits_credentials as nc
+import pachube_credentials as pc
 
 def post_nimbits_http(stream, value):
     nimbits_data = {"email":"drdrsoto@gmail.com",
@@ -29,11 +31,22 @@ def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
     db_cursor.execute(query_string, (time_stamp, data_value, response))
     db_connection.commit()
 
-def post_nimbits_staggered(data_value, stream_name, s):
+def post_custom_server_http(tag, value, time_stamp):
+    ip_address = '50.56.226.226'
+    port = '8000'
+    request_string = 'http://%s:%s/?tag=%s&value=%s&time_stamp=%s'
+    request_string = request_string % (ip_address,
+                                       port,
+                                       tag,
+                                       value,
+                                       time_stamp)
+    r = requests.get(request_string)
+
+def post_nimbits_gprs(data_value, stream_name, s):
 
     content = ''
-    content += 'secret=01787ade-c6d6-4f9b-8b86-20850af010d9'
-    content += '&email=drdrsoto@gmail.com'
+    content += 'secret=%s' % nc.secret
+    content += '&email=%s' % nc.email
     content += '&value=%s' % data_value
     content += '&point=%s' % stream_name
     content_length = len(content)
@@ -60,43 +73,50 @@ def is_string_in_response(string, response):
             present = True
     return present
 
-def initiate_modem(s):
-    tw.log.info('flushing out serial port')
-    pause_and_read_serial(s)
-
-    s.write('AT\r\n')
-    response = pause_and_read_serial(s)
-    if is_string_in_response('OK', response):
-        tw.log.info('good AT response')
-    else:
-        tw.log.warning('bad AT response')
-
-    s.write('AT#GPRS=1\r\n')
-    response = pause_and_read_serial(s)
-    if is_string_in_response('OK', response):
-        tw.log.info('good GPRS response')
-    else:
-        tw.log.warning('bad GPRS response')
-
-    s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
-    response = pause_and_read_serial(s)
-    if is_string_in_response('OK', response):
-        tw.log.info('good CGDCONT response')
-    else:
-        tw.log.warning('bad CGDCONT response')
-
-    connection_attempt = 1
+def initiate_modem_nimbits(s):
+    connection_attempt = 0
     while 1:
+        connection_attempt += 1
+
+        tw.log.info('connection attempt ' + str(connection_attempt))
+
+        tw.log.info('flushing out serial port')
+        pause_and_read_serial()
+
+        s.write('AT\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('OK', response):
+            tw.log.info('good AT response')
+        else:
+            tw.log.warning('bad AT response')
+            continue
+
+        s.write('AT#GPRS=1\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('OK', response):
+            tw.log.info('good GPRS response')
+        else:
+            tw.log.warning('bad GPRS response')
+
+        s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
+        response = pause_and_read_serial()
+        if is_string_in_response('OK', response):
+            tw.log.info('good CGDCONT response')
+        else:
+            tw.log.warning('bad CGDCONT response')
+            continue
+
         s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
-        response = pause_and_read_serial(s)
+        response = pause_and_read_serial()
         if is_string_in_response('CONNECT', response):
             tw.log.info('good SD response ' + str(connection_attempt))
             break
         else:
             tw.log.warning('bad SD response ' + str(connection_attempt))
-            time.sleep(5)
-            connection_attempt += 1
-
+            tw.log.info('raw SD response')
+            for r in response:
+                tw.log.info(r.strip())
+            continue
 
 def read_ain2():
     num_avg = 20
@@ -137,7 +157,7 @@ def parse_response(s):
     return first_response
 
 def post_pachube_http(value):
-    headers = {"X-PachubeApiKey": "yKcC6HugqvNtshxI6qEreOPYs9qQG7gZfloc3JQWPbQ"}
+    headers = pc.headers
     data={"version":"1.0.0","datastreams":[{"id":"01","current_value":value}]}
     try:
         r = requests.put('http://api.pachube.com/v2/feeds/43073',headers=headers,data=json.dumps(data))
@@ -148,7 +168,6 @@ def post_pachube_http(value):
         tw.log.info(log_message)
     else:
         tw.log.error(log_message)
-
 
 def pause_and_read_serial(s):
     time.sleep(1)
