@@ -81,10 +81,10 @@ def initiate_modem_nimbits(s):
         tw.log.info('connection attempt ' + str(connection_attempt))
 
         tw.log.info('flushing out serial port')
-        pause_and_read_serial()
+        pause_and_read_serial(s)
 
         s.write('AT\r\n')
-        response = pause_and_read_serial()
+        response = pause_and_read_serial(s)
         if is_string_in_response('OK', response):
             tw.log.info('good AT response')
         else:
@@ -92,14 +92,14 @@ def initiate_modem_nimbits(s):
             continue
 
         s.write('AT#GPRS=1\r\n')
-        response = pause_and_read_serial()
+        response = pause_and_read_serial(s)
         if is_string_in_response('OK', response):
             tw.log.info('good GPRS response')
         else:
             tw.log.warning('bad GPRS response')
 
         s.write('AT+CGDCONT=1,"IP","epc.tmobile.com","0.0.0.0",0,0\r\n')
-        response = pause_and_read_serial()
+        response = pause_and_read_serial(s)
         if is_string_in_response('OK', response):
             tw.log.info('good CGDCONT response')
         else:
@@ -107,7 +107,7 @@ def initiate_modem_nimbits(s):
             continue
 
         s.write('AT#SD=2,0,80,"app.nimbits.com"\r\n')
-        response = pause_and_read_serial()
+        response = pause_and_read_serial(s)
         if is_string_in_response('CONNECT', response):
             tw.log.info('good SD response ' + str(connection_attempt))
             break
