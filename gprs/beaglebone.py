@@ -34,13 +34,14 @@ def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
 def post_custom_server_http(tag, value, time_stamp):
     ip_address = '50.56.226.226'
     port = '8000'
-    request_string = 'http://%s:%s/?tag=%s&value=%s&time_stamp=%s'
-    request_string = request_string % (ip_address,
-                                       port,
-                                       tag,
-                                       value,
-                                       time_stamp)
-    r = requests.get(request_string)
+    url = 'http://' + ip_address + ':' + port
+
+    time_stamp = datetime.datetime.now().isoformat()
+    data = {'tag': tag,
+            'time_stamp': time_stamp,
+            'value': value}
+
+    r = requests.post(url, data=data)
 
 def post_nimbits_gprs(data_value, stream_name, s):
 
@@ -173,5 +174,3 @@ def pause_and_read_serial(s):
     time.sleep(1)
     response = s.readlines()
     return response
-
-
