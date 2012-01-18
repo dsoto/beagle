@@ -36,7 +36,7 @@ def post_custom_server_http(tag, value, time_stamp):
     port = '8000'
     url = 'http://' + ip_address + ':' + port
 
-    time_stamp = datetime.datetime.now().isoformat()
+    time_stamp = dt.datetime.now().isoformat()
     data = {'tag': tag,
             'time_stamp': time_stamp,
             'value': value}
