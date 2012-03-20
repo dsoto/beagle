@@ -31,8 +31,8 @@ def write_to_db(time_stamp, data_value, response, db_cursor, db_connection):
     db_cursor.execute(query_string, (time_stamp, data_value, response))
     db_connection.commit()
 
-def post_custom_server_http(tag, value, time_stamp):
-    ip_address = '50.56.226.226'
+def post_custom_server_http(ip_address, tag, value, time_stamp):
+    #ip_address = '50.56.226.226'
     port = '8000'
     url = 'http://' + ip_address + ':' + port
 
