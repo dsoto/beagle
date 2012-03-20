@@ -1,5 +1,5 @@
 import beaglebone as bb
-
+import time
 import datetime as dt
 
 tag = 'kitchen'
@@ -11,4 +11,4 @@ while (1):
 
     bb.post_custom_server_http(ip, tag, data_value, time_stamp)
 
-    sleep(10)
+    time.sleep(10)
