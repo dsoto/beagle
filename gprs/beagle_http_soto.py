@@ -11,4 +11,4 @@ while (1):
 
     bb.post_custom_server_http(ip, tag, data_value, time_stamp)
 
-    time.sleep(10)
+    time.sleep(60 * 5)
