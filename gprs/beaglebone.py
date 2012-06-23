@@ -129,11 +129,10 @@ def initiate_modem_nimbits(s):
                 #tw.log.info(r.strip())
             continue
 
-def read_ain2():
+def read_ain2(verbose=False):
     num_avg = 20
     data_value = 0
     for i in range(num_avg):
-        print i
         f = open('/sys/devices/platform/omap/tsc/ain2')
         data_value_string = ''
         while 1:
@@ -142,12 +141,14 @@ def read_ain2():
                 break
             else:
                 data_value_string += char
-        #tw.log.info(data_value_string)
+        if verbose is True:
+            tw.log.info(data_value_string)
         data_value += float(data_value_string)
         f.close()
         time.sleep(1.0)
     data_value = data_value / num_avg
-    #tw.log.info('avg = ' + str(data_value))
+    if verbose is True:
+        tw.log.info('avg = ' + str(data_value))
     return data_value
 
 def parse_response(s):
